@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React, {useState} from 'react';
 import { CiSearch, CiFilter } from "react-icons/ci";
 import { FaPlus,} from "react-icons/fa6";
 import { LuArrowUpRight } from "react-icons/lu";
@@ -9,11 +9,23 @@ import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
 import { IoEye, IoTrashOutline } from "react-icons/io5";
 import { TiPencil } from "react-icons/ti";
 import { IoIosLink } from "react-icons/io";
+import AddProprioModal from './addProprio';
+import ModifierModal from './Modifier';
+import ConfirmationModal from './confirmation';
+import ContratModal from './contrat';
 
 
 
 
-const columns: GridColDef<(typeof rows)[number]>[] = [
+export default function Header(){
+    const [isOpen, setIsOpen] = useState({
+      confirmation:false,
+      update:false,
+      add:false,
+      contrat:false
+    });
+
+    const columns: GridColDef<(typeof rows)[number]>[] = [
   
   { field: 'numero', 
     headerName: 'No',
@@ -70,17 +82,17 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
     <GridActionsCellItem
       icon={<TiPencil size={18} color="#000" />}
       label="Modifier"
-      onClick={() => console.log('Modifier', params.id)}
+      onClick={()=>setIsOpen({...isOpen,update:true})}
     />,
     <GridActionsCellItem
       icon={<IoIosLink size={18} color="#000" />}
       label="Lien"
-      onClick={() => console.log('Lien', params.id)}
+      onClick={()=>setIsOpen({...isOpen,contrat:true})}
     />,
     <GridActionsCellItem
       icon={<IoTrashOutline size={18} color="red" />}
       label="Supprimer"
-      onClick={() => console.log('Supprimer', params.id)}
+      onClick={()=>setIsOpen({...isOpen,confirmation:true})}
       showInMenu={false}
     />,
   ],
@@ -98,15 +110,12 @@ const rows = [
   { numero: 8, id: 8, NomPrenom: 'Frances',  age: 36 },
   { numero: 0, id: 9, NomPrenom: 'Roxie',  age: 65 },
 ];
-
-
-export default function Header(){
+    
     return(
        
          <>
 
-        <div className='flex flex-row'>
-
+        <div className='flex flex-row'>   
         <div>
           <Sidebar />
         </div>
@@ -121,13 +130,15 @@ export default function Header(){
               </div>
               <div className=" w-[492px] flex justify-between items-center gap-[37px] ">
                     <div className="w-[253px] flex justify-between items-center bg-[#F6F6F6]  ">
-                            <h2 className="text-[1.4rem] ml-[23px] mt-[13.5px] mb-[13.5px] font-bold w-[85px]">Rechercher</h2>
-                            <CiSearch size={24} color="#F08130" className="mr-[26.22px] mt-[13px] mb-[14.72px]" />
+                            <h2   className="text-[1.4rem] ml-[23px] mt-[13.5px] mb-[13.5px] font-bold w-[85px]">Rechercher</h2>
+                            <CiSearch  size={24} color="#F08130" className="mr-[26.22px] mt-[13px] mb-[14.72px]" />
                     </div>
                     
                     <div className="w-[227px] flex justify-between items-center bg-[#F08130]  ">
-                            <FaPlus size={24} color="#000000" className="ml-[17px] " />
-                            <h2 className="text-[1.4rem] pt-[13.5px] pb-[13.5px] pr-[17px] font-bold">Nouveau Propriétaire</h2>
+                            <FaPlus  onClick={()=>setIsOpen({...isOpen,add:true})} size={24} color="#000000" className="ml-[17px] cursor-pointer " />
+                            <span  className="text-[1.4rem] pt-[13.5px] pb-[13.5px] pr-[17px] font-bold cursor-pointer" onClick={() =>setIsOpen({...isOpen,add:true})}>
+                              Nouveau Propriétaire
+                            </span>
                     </div>
                     
                </div>
@@ -188,14 +199,17 @@ export default function Header(){
         pageSizeOptions={[5]}
       />
     </Box>
-    );
-
- 
+    {/* <AddProprioModal open={showModal} onClose={() => setShowModal(false)} /> */}
+    <ModifierModal open={isOpen.update} onClose={() => setIsOpen({...isOpen,update:false})} />  
+    <ConfirmationModal 
+      open={isOpen.confirmation} 
+      onClose={() => setIsOpen({...isOpen,confirmation:false})}
+      onConfirm={() => setIsOpen({...isOpen,confirmation:false,update:false})}
+    />  
+    <AddProprioModal open={isOpen.add} onClose={() =>setIsOpen({...isOpen,add:false})} />  
+    <ContratModal open={isOpen.contrat} onClose={() =>setIsOpen({...isOpen,contrat:false})} />  
+     
     </>
-
-    
-        
-       
     )
 }
 

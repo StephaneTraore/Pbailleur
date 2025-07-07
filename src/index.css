@@ -1,0 +1,17 @@
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('/src/assets/fonts/helvetica-bold.otf') format(otf),
+        url('/src/assets/fonts/helvetica-roman.otf') format(otf);
+  font-weight: bold;
+}
+
+body{
+    font-family: "Helvetica Neue";
+    background: #F6F6F6;
+    
+
+}
+
+html{
+  font-size: 61%;
+}

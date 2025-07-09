@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { FiEdit } from "react-icons/fi";
-import ConfirmationModal from './confirmation';
+import ConfirmationModal from '../PageProprietaire/confirmation';
+
 
 const style = {
   position: 'absolute',
@@ -16,7 +17,9 @@ const style = {
   p: 4,
 };
 
-export default function ModifierModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+
+
+export default function ModifierModal({ open, onClose }: { open: boolean; onClose: () => void }, ) {
   const [showConfirmation, setShowConfirmation] = useState(false);
   return (
     <>
@@ -94,7 +97,7 @@ export default function ModifierModal({ open, onClose }: { open: boolean; onClos
               }}
               className=" font-bold text-[1.6rem] px-4 cursor-pointer py-2 rounded bg-[#F08130]"
             >
-              Enregistrer
+              Modifier
             </button>
           </div>
         </form>

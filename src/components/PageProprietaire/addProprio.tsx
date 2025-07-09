@@ -86,7 +86,7 @@ export default function AddProprioModal({ open, onClose }: { open: boolean; onCl
               type="submit"
               className=" font-bold text-[1.6rem] px-4 py-2 rounded bg-[#F08130]"
             >
-              Supprimer
+              Enregistrer
             </button>
           </div>
         </form>

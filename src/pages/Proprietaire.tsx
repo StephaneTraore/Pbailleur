@@ -3,16 +3,18 @@ import { CiSearch, CiFilter } from "react-icons/ci";
 import { FaPlus,} from "react-icons/fa6";
 import { LuArrowUpRight } from "react-icons/lu";
 import { IoDocumentTextOutline } from "react-icons/io5";
-import Sidebar from "./sidebar";
+import Sidebar from "../components/layout/sidebar";
 import Box from '@mui/material/Box';
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
 import { IoEye, IoTrashOutline } from "react-icons/io5";
 import { TiPencil } from "react-icons/ti";
 import { IoIosLink } from "react-icons/io";
-import AddProprioModal from './addProprio';
-import ModifierModal from './Modifier';
-import ConfirmationModal from './confirmation';
-import ContratModal from './contrat';
+import { useNavigate } from "react-router-dom";
+import AddProprioModal from '../components/PageProprietaire/addProprio';
+import ConfirmationModal from '../components/PageProprietaire/confirmation';
+import ContratModal from '../components/PageProprietaire/contrat';
+import ModifierModal from '../components/PageProprietaire/Modifier';
+
 
 
 
@@ -25,12 +27,15 @@ export default function Header(){
       contrat:false
     });
 
+    const navigate = useNavigate();
+
     const columns: GridColDef<(typeof rows)[number]>[] = [
   
   { field: 'numero', 
     headerName: 'No',
     width: 51,
     sortable: false,
+    flex:1
     
     
   },
@@ -41,12 +46,13 @@ export default function Header(){
     headerName: 'Nom du proprietaire',
     width: 227,
     sortable: false,
+    flex:1
    // editable: true,
   },
   {
     field: 'Telephone',
     headerName: 'Téléphone',
-    
+    flex:1,
     width: 213,
     sortable: false,
     //editable: true,
@@ -54,7 +60,7 @@ export default function Header(){
   {
     field: 'email',
     headerName: 'Email',
-    
+    flex:1,
     width: 176,
     sortable: false,
     //editable: true,
@@ -65,6 +71,7 @@ export default function Header(){
     headerName: 'Adresse',
     sortable: false,
     width: 207,
+    flex:1
    // valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
   },
 
@@ -73,11 +80,12 @@ export default function Header(){
   headerName: "Options",
   type: "actions",
   width: 154,
+  flex:1,
   getActions: (params) => [
     <GridActionsCellItem
       icon={<IoEye size={18} color="#000000" />}
       label="Voir"
-      onClick={() => console.log('Voir', params.id)}
+      onClick={() => navigate("/detailproprio")} 
     />,
     <GridActionsCellItem
       icon={<TiPencil size={18} color="#000" />}
@@ -120,9 +128,9 @@ const rows = [
           <Sidebar />
         </div>
          </div> 
-         <div className="w-[1147px]  bg-white mt-[84px] mr-[30px] ml-[320px] ">
+         <div className="ml-[335px] mr-[30px] mt-[85px] bg-white ">
               
-              <div className='pt-[24px] pl-[40px] pb-[22px] pr-[15px] w-[1092px] flex  items-center flex justify-between items-center   '>
+              <div className='pt-[24px] pl-[40px] pb-[22px] pr-[15px]  flex  items-center flex justify-between items-center   '>
               <div className='w-[483px] py-[2px]  '>
                   <h1 className=' text-[3.1rem] font-bold font-helvetica '>Propriétaires</h1>
                    <span className='text-[1.3rem] font-bold'>Affichés:</span>
@@ -145,7 +153,7 @@ const rows = [
               </div>  
 
         </div>
-        <div className="w-[332px]  mt-[55px] ml-[320px] flex justify-between items-center ">
+        <div className="w-[332px]  mt-[55px] ml-[335px] flex justify-between items-center ">
             <div className="flex justify-between w-[101px] items-center bg-white">
                 <CiFilter size={20} className="ml-[10px] mt-[10px] mb-[10px] "/>
                 <button className="mt-[13.5px] mb-[13.5px] mr-[17px] text-[13px] font-bold ">Filtrer</button>
@@ -162,7 +170,7 @@ const rows = [
 
         </div>
 
-        <Box  sx={{ width: '1147px', marginLeft:'320px', marginTop:'26px' }} >
+      <Box  className=" ml-[337px] mt-[26px] mr-[28px] " >
       <DataGrid
         rows={rows}
         columns={columns}
@@ -199,17 +207,19 @@ const rows = [
         pageSizeOptions={[5]}
       />
     </Box>
-    {/* <AddProprioModal open={showModal} onClose={() => setShowModal(false)} /> */}
-    <ModifierModal open={isOpen.update} onClose={() => setIsOpen({...isOpen,update:false})} />  
+    
+    <ModifierModal open={isOpen.update} onClose={() => setIsOpen({...isOpen,update:false})}  />  
     <ConfirmationModal 
       open={isOpen.confirmation} 
       onClose={() => setIsOpen({...isOpen,confirmation:false})}
       onConfirm={() => setIsOpen({...isOpen,confirmation:false,update:false})}
     />  
     <AddProprioModal open={isOpen.add} onClose={() =>setIsOpen({...isOpen,add:false})} />  
-    <ContratModal open={isOpen.contrat} onClose={() =>setIsOpen({...isOpen,contrat:false})} />  
+    <ContratModal open={isOpen.contrat} onClose={() =>setIsOpen({...isOpen,contrat:false})} nom='Enregister' />  
      
     </>
     )
 }
+
+
 

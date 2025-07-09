@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import ConfirmationModal from './confirmation';
 import { IoIosLink, IoIosArrowDown } from 'react-icons/io';
 import { Select, Option } from "@material-tailwind/react";
 
@@ -17,7 +16,13 @@ const style = {
   p: 6,
 };
 
-export default function ContratModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+
+interface ContratProps{
+  nom:string;
+}
+
+export default function ContratModal(props: { open: boolean; onClose: () => void; nom?: string }) {
+  const { open, onClose, nom } = props;
   const [showContrat, setShowContrat] = useState(false);
   return (
     <>
@@ -114,24 +119,16 @@ export default function ContratModal({ open, onClose }: { open: boolean; onClose
                 e.preventDefault();
                 setShowContrat(true);
               }}
-              className=" font-bold text-[1.6rem] px-6 py-3 cursor-pointer rounded bg-[#F08130] hover:bg-orange-600 text-white"
+              className=" font-bold text-[1.6rem] px-6 py-3 cursor-pointer rounded cursor-pointer bg-[#F08130]  text-black"
             >
-              Enregistrer
+              {nom}
             </button>
           </div>
         </form>
       </Box>
     </Modal>
 
-    <ConfirmationModal
-      open={showContrat}
-      onClose={() => setShowContrat(false)}
-      onConfirm={() => {
-        setShowContrat(false);
-        onClose();
-       
-      }}
-    />
+    
     </>
   );
 }

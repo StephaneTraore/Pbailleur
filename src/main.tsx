@@ -5,7 +5,10 @@ import App from './App.tsx'
 
 
 createRoot(document.getElementById('root') as HTMLElement).render(
-  <StrictMode>
+ 
+    <StrictMode>
     <App />
-  </StrictMode>,
+   </StrictMode>,
+
+  
 )

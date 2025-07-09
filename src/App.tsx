@@ -1,14 +1,22 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
-import AddProprio from './components/layout/addProprio'
-import Header from './components/layout/header'
-import Sidebar from './components/layout/sidebar'
+import Proprietaires from './pages/Proprietaire'
+
+import Sites from "./pages/Sites";
+import NotFound from './pages/NotFound';
+import DetailProprietaire from './components/PageProprietaire/detailsProprio';
 
 
 function App() {
-
-
   return (
-   <Header />
+    <Router>
+      <Routes>
+        <Route path="/" element={<Sites />} />
+        <Route path="/proprietaire" element={<Proprietaires />} />
+        <Route path="/detailproprio" element={<DetailProprietaire />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   )
 }
 

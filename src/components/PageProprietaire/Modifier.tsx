@@ -20,7 +20,6 @@ const style = {
 
 
 export default function ModifierModal({ open, onClose }: { open: boolean; onClose: () => void }, ) {
-  const [showConfirmation, setShowConfirmation] = useState(false);
   return (
     <>
      <Modal
@@ -91,10 +90,7 @@ export default function ModifierModal({ open, onClose }: { open: boolean; onClos
             </button>
             <button
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                setShowConfirmation(true);
-              }}
+              
               className=" font-bold text-[1.6rem] px-4 cursor-pointer py-2 rounded bg-[#F08130]"
             >
               Modifier
@@ -104,15 +100,7 @@ export default function ModifierModal({ open, onClose }: { open: boolean; onClos
       </Box>
     </Modal>
 
-    <ConfirmationModal
-      open={showConfirmation}
-      onClose={() => setShowConfirmation(false)}
-      onConfirm={() => {
-        setShowConfirmation(false);
-        onClose();
-       
-      }}
-    />
+ 
     </>
   );
 }

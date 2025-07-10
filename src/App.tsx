@@ -5,6 +5,8 @@ import Proprietaires from './pages/Proprietaire'
 import Sites from "./pages/Sites";
 import NotFound from './pages/NotFound';
 import DetailProprietaire from './components/PageProprietaire/detailsProprio';
+import Contrat from './pages/Contrat';
+import Quartier from './pages/Quartier';
 
 
 function App() {
@@ -14,6 +16,8 @@ function App() {
         <Route path="/" element={<Sites />} />
         <Route path="/proprietaire" element={<Proprietaires />} />
         <Route path="/detailproprio" element={<DetailProprietaire />} />
+        <Route path="/contrat" element={<Contrat />} />
+        <Route path="/quartier" element={<Quartier />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

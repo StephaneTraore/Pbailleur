@@ -22,14 +22,14 @@ export default function Sidebar() {
     <div className="bg-black w-[20%] min-w-[240px] max-w-[301px] h-screen fixed left-0 top-0 px-6 py-8">
       {/* Logo */}
       <div className="flex items-center gap-6 mb-12">
-        <img src="/src/assets/images/orange3.png" alt="logo-orange" className="w-10" />
-        <span className="text-white text-3xl font-bold">PBailleur</span>
+        <img src="/src/assets/images/orange3.png" alt="logo-orange" className="w-15" />
+        <span className="text-white text-[3.4rem] font-bold">PBailleur</span>
       </div>
 
       {/* Menu */}
       <div className="flex flex-col gap-15">
-        <SidebarItem icon={<HiHome size={24} />} label="Accueil" onClick={() => {}} dropdownOptions={[]} />
-        <SidebarItem icon={<FaCreditCard size={24} />} label="Paiement" onClick={() => {}} dropdownOptions={[]} />
+        <SidebarItem icon={<HiHome size={24} />} label="Accueil " onClick={() => {}} dropdownOptions={[]} />
+        <SidebarItem icon={<FaCreditCard size={24} />}  label="Paiement" onClick={() => {}} dropdownOptions={[]} />
         <SidebarItem icon={<PiNotePencilFill size={24} />} label="Editions" hasDropdown onClick={() => {}} dropdownOptions={[]} />
         <SidebarItem icon={<SlGraph size={24} />} label="Statistiques" hasDropdown onClick={() => {}} dropdownOptions={[]} />
         <SidebarItem icon={<PiCardholderFill size={24} />} label="Paiement Global" onClick={() => {}} dropdownOptions={[]} />
@@ -45,7 +45,6 @@ export default function Sidebar() {
             { label: 'Site' },
             { label: 'Propriétaires' },
             { label: 'Contrat' },
-            { label: 'Liaison propriétaire-contrat' },
             { label: 'Quartiers' },
           ]}
         />
@@ -58,13 +57,13 @@ function SidebarItem({ icon, label, hasDropdown = false, isButton = false, isOpe
   return (
     <div className="flex flex-col w-full">
       <div
-        className={`flex justify-between items-center text-white text-lg cursor-pointer py-2 px-1 rounded hover:bg-gray-800 transition-all duration-150 ${isOpen ? 'bg-gray-900' : ''}`}
+        className={`flex justify-between items-center text-[1.6rem] text-white text-lg cursor-pointer py-2 px-1 rounded hover:bg-gray-800 transition-all duration-150 ${isOpen ? 'bg-gray-900' : ''}`}
         onClick={onClick}
       >
         <div className="flex items-center gap-4">
           {icon}
           {isButton ? (
-            <button className="text-left bg-transparent border-none outline-none text-white">{label}</button>
+            <button className="text-left text-[1.4rem] bg-transparent border-none outline-none text-white">{label}</button>
           ) : (
             <span>{label}</span>
           )}
@@ -78,7 +77,7 @@ function SidebarItem({ icon, label, hasDropdown = false, isButton = false, isOpe
               <Link
                 key={opt.label}
                 to="/proprietaire"
-                className="text-left text-white text-[1.1rem] px-2 py-1 hover:bg-[#F08130] rounded transition-all duration-100 block"
+                className="text-left text-white text-[1.4rem] px-2 py-1 hover:bg-[#F08130] rounded transition-all duration-100 block"
               >
                 {opt.label}
               </Link>
@@ -88,14 +87,34 @@ function SidebarItem({ icon, label, hasDropdown = false, isButton = false, isOpe
               <Link
                 key={opt.label}
                 to="/"
-                className="text-left text-white text-[1.1rem] px-2 py-1 hover:bg-[#F08130] rounded transition-all duration-100 block"
+                className="text-left text-white text-[1.4rem] px-2 py-1 hover:bg-[#F08130] rounded transition-all duration-100 block"
               >
                 {opt.label}
               </Link>
+            ) : opt.label === 'Contrat' ? (
+
+              <Link
+                key={opt.label}
+                to="/contrat"
+                className="text-left text-white text-[1.4rem] px-2 py-1 hover:bg-[#F08130] rounded transition-all duration-100 block"
+              >
+                {opt.label}
+              </Link>
+
+            ) : opt.label === 'Quartiers' ? (
+
+              <Link
+                key={opt.label}
+                to="/quartier"
+                className="text-left text-white text-[1.4rem] px-2 py-1 hover:bg-[#F08130] rounded transition-all duration-100 block"
+              >
+                {opt.label}
+              </Link>
+
             ) : (
               <button
                 key={opt.label}
-                className="text-left text-white text-[1.1rem] px-2 py-1 hover:bg-[#F08130] rounded transition-all duration-100"
+                className="text-left text-white text-[1.4rem] px-2 py-1 hover:bg-[#F08130] rounded transition-all duration-100"
               >
                 {opt.label}
               </button>
@@ -106,10 +125,14 @@ function SidebarItem({ icon, label, hasDropdown = false, isButton = false, isOpe
         
       )}
 
+      
+
       <Outlet />
     </div>
 
     
+
+   
 
   );
 }

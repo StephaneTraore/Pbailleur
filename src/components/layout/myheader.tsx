@@ -18,7 +18,7 @@ export default function Myheader({title, label, total, onLabelClick}:HeaderProps
                           <div className='pt-[24px] pl-[40px] pb-[22px] pr-[15px]  flex  items-center flex justify-between items-center   '>
                           <div className='w-[483px] py-[2px]  '>
                               <h1 className=' text-[3.1rem] font-bold font-helvetica '>{title}</h1>
-                               <span className='text-[1.3rem] font-bold'>Affichés:</span>
+                               <span className='text-[1.3rem] font-bold'>Affichés : </span>
                                <span className='text-[1.3rem] font-bold'>{total} éléments</span>
                           </div>
                           <div className=" w-[492px] flex justify-between items-center gap-[37px] ">

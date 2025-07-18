@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../components/layout/sidebar";
 import Myheader from "../components/layout/myheader";
 import MybuttonContrat from "../components/PageContrat/MybuttonContrat";
@@ -10,10 +10,45 @@ import AddContratModal from "../components/PageContrat/AddContrat";
 import EditContratModal from "../components/PageContrat/EditContrat";
 import DetailContratModal from "../components/PageContrat/DetailContrat";
 import DeleteContratModal from "../components/PageContrat/DeleteContrat";
+import { Contrats, contratService } from "../services/contrat";
 
 
 
 export default function Contrat(){
+
+  const [contrat, setContrat]= useState<Contrats[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedContrat, setSelecetedContrat] = useState<Contrats | null>(null);
+
+        const loadContrat = async () =>{
+          try{
+               setLoading(true);
+                const response = await contratService.getAll();
+                setContrat(response.data);
+                setError(error);
+          }catch(error){
+            setError('Erreur lors du chargement des contrats');
+          }finally{
+            setLoading(false);
+          }   
+        };
+
+
+              const handleDelete = async(id:number)=>{
+                try{
+                  await contratService.delete(id);
+                  await loadContrat();
+                  setIsOpen({...isOpen, confirmation: false});
+                }catch(error){
+                  setError('Erreur lors de la suppression');
+                  console.error(error);
+                }
+              };
+
+              useEffect(()=>{
+                      loadContrat();
+                    }, [])
 
     const [isOpen, setIsOpen] = useState({
               confirmation:false,
@@ -23,9 +58,9 @@ export default function Contrat(){
               
             });
 
-        const columns: GridColDef<(typeof rows)[number]>[] = [    
+        const columns: GridColDef<Contrats>[] = [    
       { field: 'Numero', 
-        headerName: 'N• Contrat',
+        headerName: 'Nº Contrat',
         width: 51,
         sortable: false,
         flex:1,
@@ -36,7 +71,7 @@ export default function Contrat(){
 
       { field: 'NomSite', headerName: 'Non Site', width: 119, sortable: false,  },
 
-      { field: 'NoSite', headerName: 'N• Site', width: 119, sortable: false,  },
+      { field: 'NoSite', headerName: 'Nº Site', width: 119, sortable: false,  },
 
       {
         field: 'debut',
@@ -121,9 +156,9 @@ export default function Contrat(){
     }
     ];
     
-    const rows = [
-      { Numero: 3622, id: 1, NomSite:'FRIGUIADI' , NoSite: '2518',  debut: '05/07/2022', fin:'04/07/2027',mt_mensuel:1764706, aug:'0.0', cfu:'15.0', etat:'En service', type:'Location'  },
-    ];
+    // const rows = [
+    //   { Numero: 3622, id: 1, NomSite:'FRIGUIADI' , NoSite: '2518',  debut: '05/07/2022', fin:'04/07/2027',mt_mensuel:1764706, aug:'0.0', cfu:'15.0', etat:'En service', type:'Location'  },
+    // ];
 
     return(
         <>
@@ -138,7 +173,7 @@ export default function Contrat(){
                     <div>
             <Box  className=" ml-[337px] mt-[26px] mr-[28px] " >
             <DataGrid
-                rows={rows}
+                rows={contrat}
                 columns={columns}
                 initialState={{
                 pagination: {
@@ -176,10 +211,32 @@ export default function Contrat(){
         </div>
         </div>
 
-        <AddContratModal  open={isOpen.add} onClose={() => setIsOpen({...isOpen,add:false})} />
-        <EditContratModal  open={isOpen.update} onClose={() => setIsOpen({...isOpen,update:false})} />
-        <DetailContratModal  open={isOpen.detail} onClose={() => setIsOpen({...isOpen,detail:false})} />
-        <DeleteContratModal  open={isOpen.confirmation} onClose={() => setIsOpen({...isOpen,confirmation:false})} />
+        <AddContratModal  
+        open={isOpen.add} 
+        onClose={() => setIsOpen({...isOpen,add:false})} 
+       // onSuccess{loadContrat}
+        />
+
+
+        <EditContratModal  
+        open={isOpen.update} 
+        onClose={() => setIsOpen({...isOpen,update:false})} 
+       // onSuccess={loadContrat}
+        />
+
+
+        <DetailContratModal  
+        open={isOpen.detail} 
+        onClose={() => setIsOpen({...isOpen,detail:false})} 
+        //contrat={selectedContrat}
+        />
+
+
+        <DeleteContratModal  
+        open={isOpen.confirmation} 
+        onClose={() => setIsOpen({...isOpen,confirmation:false})} 
+       // onConfirm={() => selectedContrat && handleDelete(selectedContrat.id!)}
+        />
 
 
         </>

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { FiEdit } from "react-icons/fi";
 import ConfirmationModal from '../PageProprietaire/confirmation';
+import { Proprietaire, proprietaireService } from '../../services/proprietaire';
 
 
 const style = {
@@ -17,9 +18,76 @@ const style = {
   p: 4,
 };
 
+interface modifierModalProps{
+  open: boolean;
+  onClose: () => void;
+  proprio? : Proprietaire | null;
+  onSuccess?: () => void;
+}
 
 
-export default function ModifierModal({ open, onClose }: { open: boolean; onClose: () => void }, ) {
+export default function ModifierModal({ open, onClose, onSuccess, proprio }: modifierModalProps ) {
+
+  const [formData, setFormData] = useState({
+    nom: "",
+    telephone: "",
+    email: "",
+    adresse:""
+  })
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+
+  useEffect(()=>{
+    if(proprio && open){
+      setFormData({
+        nom:proprio.nom || '',
+        telephone: proprio.telephone || '',
+        email: proprio.email || '',
+        adresse: proprio.adresse || ''
+      })
+    }
+  }, [proprio, open]);
+
+ 
+
+    const handleInputChange= (field: string, value: string) => {
+      setFormData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    };
+  
+    const handleSubmit = async(e:React.FormEvent)=>{
+       e.preventDefault();
+      
+      if (!proprio?.id) {
+        setError('Site non trouvé');
+        return;
+      }
+  
+      try{
+        setLoading(true);
+        setError(null);
+  
+        const proprioData = {
+          ...formData,
+         
+        };
+  
+        await proprietaireService.update(proprio.id, proprioData);
+        
+        onClose();
+        onSuccess?.();
+  
+      }catch{
+        setError('Erreur lors de la modification du site')
+      }finally{
+        setLoading(false);
+      }
+    }
+
   return (
     <>
      <Modal
@@ -36,7 +104,13 @@ export default function ModifierModal({ open, onClose }: { open: boolean; onClos
         </div >
          <button onClick={onClose} className=' text-[20px] gap-10 cursor-pointer '>x</button>
         </div>
-        <form className="space-y-4">
+
+         {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
 
           <div className='flex gap-10 mb-2'>
           <div className='flex inline-block ' >
@@ -47,6 +121,8 @@ export default function ModifierModal({ open, onClose }: { open: boolean; onClos
             type="text"
             placeholder="Nom"
             className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full rounded mb-10"
+            value={formData.nom}
+            onChange={(e)=> handleInputChange('nom', e.target.value)}
           />
           
           
@@ -56,6 +132,8 @@ export default function ModifierModal({ open, onClose }: { open: boolean; onClos
             type="email"
             placeholder="Email"
             className="border font-bold text-[1.4rem] border-gray-300 p-5 w-full rounded"
+            value={formData.email}
+            onChange={(e)=> handleInputChange('email', e.target.value)}
           />
 
           </div>
@@ -68,6 +146,8 @@ export default function ModifierModal({ open, onClose }: { open: boolean; onClos
             type="tel"
             placeholder="Téléphone"
             className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full  mb-10 "
+            value={formData.telephone}
+            onChange={(e)=> handleInputChange('telephone', e.target.value)}
           />
           
           <label htmlFor="" className='font-bold text-[1.6rem]'>Adresse <span className='text-[#F08130] '>*</span> </label> 
@@ -76,6 +156,8 @@ export default function ModifierModal({ open, onClose }: { open: boolean; onClos
             type="text"
             placeholder="Adresse"
             className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full rounded"
+            value={formData.adresse}
+            onChange={(e)=> handleInputChange('adresse', e.target.value)}
           />
           </div>
           </div>
@@ -89,11 +171,11 @@ export default function ModifierModal({ open, onClose }: { open: boolean; onClos
               Annuler
             </button>
             <button
-              type="button"
+              type="submit"
               
               className=" font-bold text-[1.6rem] px-4 cursor-pointer py-2 rounded bg-[#F08130]"
             >
-              Modifier
+              {loading ? 'Modification...' : 'Modifier'}
             </button>
           </div>
         </form>

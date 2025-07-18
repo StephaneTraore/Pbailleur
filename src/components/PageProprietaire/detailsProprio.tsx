@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../layout/sidebar";
 import { IoIosLink } from "react-icons/io";
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
@@ -8,15 +8,57 @@ import Box from "@mui/material/Box";
 import ContratModal from "./contrat";
 import ContratModalModification from "./contrat2";
 import ConfirmationModal from "./confirmation";
+import { Proprietaire, proprietaireService } from "../../services/proprietaire";
+import { useLocation } from "react-router-dom";
+
+
+
+
+
+
 
 
 export default function DetailProprietaire(){
+
+
+    
 
     const [isOpen, setIsOpen] = useState({
           confirmation:false,
           contrat:false,
           contratModif:false
         });
+
+
+    const location = useLocation();
+    const selectedProprio = location.state as Proprietaire;    
+
+
+        // const [proprietaire, setProprietaire] = useState<Proprietaire[]>([]);
+        // const [loading, setLoading] = useState(true);
+        // const [error, setError] = useState<string | null>(null);
+        // const [selectedProprio, setSelecetedProprio] = useState<Proprietaire | null>(null);
+      
+    
+        // const loadProprietaires = async () => {
+        //   try{
+        //       setLoading(true);
+        //       const response = await proprietaireService.getAll();
+        //       setProprietaire(response.data.data.content);
+        //       setError(error)
+        //   }catch(error){
+        //     setError('Erreur lors du chargement des proprietaires')
+        //   }finally{
+        //     setLoading(false)
+        //   }
+        // }    
+
+
+        //   useEffect(()=>{
+        //     loadProprietaires();
+        //   }, [])
+
+
 
     const columns: GridColDef<(typeof rows)[number]>[] = [
   
@@ -103,7 +145,7 @@ const rows = [
             <div className="  mx-[19px]  flex justify-between">
                 <div className="flex gap-5">
                     <img src="/src/assets/images/profil.jpeg" className="w-[43px] rounded-full h-[43px] " alt="" />
-                    <h1 className=" my-[] font-bold text-[32px] ">El hadj SANOUSSY BERETE</h1>
+                    <h1 className=" my-[] font-bold text-[32px] ">{selectedProprio.nom.toUpperCase()}</h1>
                 </div>
 
                 <div className=" flex items-center gap-5 bg-[#F08130] ">
@@ -119,27 +161,22 @@ const rows = [
             <div className=" ml-[24px] mr-[154px] border-1  flex justify-between">
                 <div>
                     <label htmlFor="" className="text-[#999999] text-[1.3rem] " >nom</label>
-                    <h2 className="text-white font-bold text-[1.4rem] ">BERETE</h2>
-                </div>
-
-                 <div>
-                    <label htmlFor="" className="text-[#999999] text-[1.3rem] " >Prenom</label>
-                    <h2 className="text-white font-bold text-[1.4rem] ">Elhadj Sanoussy </h2>
+                    <h2 className="text-white font-bold text-[1.4rem] ">{selectedProprio.nom}</h2>
                 </div>
 
                 <div>
                     <label htmlFor="" className="text-[#999999] text-[1.3rem] " >Telephone</label>
-                    <h2 className="text-white font-bold text-[1.4rem] ">624432356</h2>
+                    <h2 className="text-white font-bold text-[1.4rem] ">{selectedProprio.telephone}</h2>
                 </div>
 
                  <div>
                     <label htmlFor="" className="text-[#999999] text-[1.3rem] " >email</label>
-                    <h2 className="text-white font-bold text-[1.4rem] ">sanoussy@gmail.com</h2>
+                    <h2 className="text-white font-bold text-[1.4rem] ">{selectedProprio.email}</h2>
                 </div>
 
                  <div>
                     <label htmlFor="" className="text-[#999999] text-[1.3rem]" >Adresse</label>
-                    <h2 className="text-white font-bold text-[1.4rem] ">Dinguiraye</h2>
+                    <h2 className="text-white font-bold text-[1.4rem] ">{selectedProprio.adresse}</h2>
                 </div>
                 
             </div>

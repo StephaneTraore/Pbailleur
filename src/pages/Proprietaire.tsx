@@ -1,4 +1,4 @@
-import  React, {useState} from 'react';
+import  React, {useEffect, useState} from 'react';
 import { CiSearch, CiFilter } from "react-icons/ci";
 import { FaPlus,} from "react-icons/fa6";
 import { LuArrowUpRight } from "react-icons/lu";
@@ -14,6 +14,7 @@ import AddProprioModal from '../components/PageProprietaire/addProprio';
 import ConfirmationModal from '../components/PageProprietaire/confirmation';
 import ContratModal from '../components/PageProprietaire/contrat';
 import ModifierModal from '../components/PageProprietaire/Modifier';
+import { Proprietaire, proprietaireService } from '../services/proprietaire';
 
 
 
@@ -27,22 +28,56 @@ export default function Header(){
       contrat:false
     });
 
+    const [proprietaire, setProprietaire] = useState<Proprietaire[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [selectedProprio, setSelecetedProprio] = useState<Proprietaire | null>(null);
+  
+
+    const loadProprietaires = async () => {
+      try{
+          setLoading(true);
+          const response = await proprietaireService.getAll();
+          setProprietaire(response.data.data.content);
+          setError(error)
+      }catch(error){
+        setError('Erreur lors du chargement des proprietaires')
+      }finally{
+        setLoading(false)
+      }
+    }
+
+     const handleDelete = async(id:number)=>{
+       try{
+           await proprietaireService.delete(id);
+           await loadProprietaires();
+              setIsOpen({...isOpen, confirmation: false});
+        }catch(error){
+              setError('Erreur lors de la suppression');
+              console.error(error);
+            }
+      };
+
+
+       useEffect(()=>{
+              loadProprietaires();
+            }, [])
+
     const navigate = useNavigate();
 
-    const columns: GridColDef<(typeof rows)[number]>[] = [
+    const columns: GridColDef<Proprietaire>[] = [
   
-  { field: 'numero', 
-    headerName: 'No',
-    width: 51,
-    sortable: false,
-    flex:1
-    
-    
-  },
+ 
 
-  { field: 'id', headerName: 'ID', width: 119, sortable: false,  },
+  { field: 'id',
+     headerName: 'ID',
+     width: 119,
+     sortable: false, 
+   },
+
+
   {
-    field: 'NomPrenom',
+    field: 'nom',
     headerName: 'Nom du proprietaire',
     width: 227,
     sortable: false,
@@ -50,7 +85,7 @@ export default function Header(){
    // editable: true,
   },
   {
-    field: 'Telephone',
+    field: 'telephone',
     headerName: 'Téléphone',
     flex:1,
     width: 213,
@@ -67,7 +102,7 @@ export default function Header(){
   },
  
   {
-    field: 'address',
+    field: 'adresse',
     headerName: 'Adresse',
     sortable: false,
     width: 207,
@@ -85,39 +120,38 @@ export default function Header(){
     <GridActionsCellItem
       icon={<IoEye size={18} color="#000000" />}
       label="Voir"
-      onClick={() => navigate("/detailproprio")} 
+      onClick={() => {
+        navigate("/detailproprio", {state: params.row})} }
     />,
     <GridActionsCellItem
       icon={<TiPencil size={18} color="#000" />}
       label="Modifier"
-      onClick={()=>setIsOpen({...isOpen,update:true})}
+      onClick={()=>{
+        setSelecetedProprio(params.row);
+        setIsOpen({...isOpen,update:true})}}
     />,
     <GridActionsCellItem
       icon={<IoIosLink size={18} color="#000" />}
       label="Lien"
-      onClick={()=>setIsOpen({...isOpen,contrat:true})}
+      onClick={()=>{
+        setIsOpen({...isOpen,contrat:true})}}
     />,
     <GridActionsCellItem
       icon={<IoTrashOutline size={18} color="red" />}
       label="Supprimer"
-      onClick={()=>setIsOpen({...isOpen,confirmation:true})}
+      onClick={()=>{
+        setSelecetedProprio(params.row);
+        setIsOpen({...isOpen,confirmation:true})}}
       showInMenu={false}
     />,
   ],
 }
 ];
 
-const rows = [
-  { numero: 1, id: 1, NomPrenom: 'Snow',Telephone: 621206186,email:'dansteph02@gmail.com',address:'Ratoma', age: 14 },
-  { numero: 2, id: 2, NomPrenom: 'Lannister',  age: 31 },
-  { numero: 3, id: 3, NomPrenom: 'Lannister',  age: 31 },
-  { numero: 4, id: 4, NomPrenom: 'Stark',  age: 11 },
-  { numero: 5, id: 5, NomPrenom: 'Targaryen',  age: null },
-  { numero: 6, id: 6, NomPrenom: 'Melisandre',  age: 150 },
-  { numero: 7, id: 7, NomPrenom: 'Clifford',  age: 44 },
-  { numero: 8, id: 8, NomPrenom: 'Frances',  age: 36 },
-  { numero: 0, id: 9, NomPrenom: 'Roxie',  age: 65 },
-];
+
+
+   if(loading) return <div>Chargement...</div>;
+     if(error) return <div>Erreur: {error}</div>;
     
     return(
        
@@ -130,11 +164,11 @@ const rows = [
          </div> 
          <div className="ml-[335px] mr-[30px] mt-[85px] bg-white ">
               
-              <div className='pt-[24px] pl-[40px] pb-[22px] pr-[15px]  flex  items-center flex justify-between items-center   '>
+              <div className='pt-[24px] pl-[40px] pb-[22px] pr-[15px]  flex  justify-between items-center   '>
               <div className='w-[483px] py-[2px]  '>
                   <h1 className=' text-[3.1rem] font-bold font-helvetica '>Propriétaires</h1>
                    <span className='text-[1.3rem] font-bold'>Affichés:</span>
-                   <span className='text-[1.3rem] font-bold'>20 éléments</span>
+                   <span className='text-[1.3rem] font-bold'> {proprietaire.length}  éléments</span>
               </div>
               <div className=" w-[492px] flex justify-between items-center gap-[37px] ">
                     <div className="w-[253px] flex justify-between items-center bg-[#F6F6F6]  ">
@@ -172,7 +206,7 @@ const rows = [
 
       <Box  className=" ml-[337px] mt-[26px] mr-[28px] " >
       <DataGrid
-        rows={rows}
+        rows={proprietaire}
         columns={columns}
         initialState={{
           pagination: {
@@ -208,13 +242,29 @@ const rows = [
       />
     </Box>
     
-    <ModifierModal open={isOpen.update} onClose={() => setIsOpen({...isOpen,update:false})}  />  
+    <ModifierModal open={isOpen.update} 
+      onClose={() => setIsOpen({...isOpen,update:false})}
+      proprio = {selectedProprio}
+      onSuccess = {loadProprietaires}
+
+    
+    />  
+
+
     <ConfirmationModal 
       open={isOpen.confirmation} 
       onClose={() => setIsOpen({...isOpen,confirmation:false})}
-      onConfirm={() => setIsOpen({...isOpen,confirmation:false,update:false})}
+      onConfirm={() => selectedProprio && handleDelete(selectedProprio.id!)}
+
     />  
-    <AddProprioModal open={isOpen.add} onClose={() =>setIsOpen({...isOpen,add:false})} />  
+
+
+    <AddProprioModal open={isOpen.add} 
+    onClose={() =>setIsOpen({...isOpen,add:false})} 
+    onSuccess={loadProprietaires}
+    />  
+
+
     <ContratModal open={isOpen.contrat} onClose={() =>setIsOpen({...isOpen,contrat:false})} nom='Enregister' />  
      
     </>

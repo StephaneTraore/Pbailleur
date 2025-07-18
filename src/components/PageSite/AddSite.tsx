@@ -2,29 +2,91 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Select, Option } from "@material-tailwind/react";
 import { IoIosArrowDown, IoIosLink } from 'react-icons/io';
+import { useState } from 'react';
+import { siteService } from '../../services/api';
 
 
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width:'90%',
-  maxWidth: 804,
-  bgcolor: 'background.paper',
-  //border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
+interface AddSiteModalProps{
+  open: boolean;
+  onClose: () => void;
+  onSuccess?: () => void;
+}
+
+
+export default function AddSiteModal({ open, onClose, onSuccess }: AddSiteModalProps) {
+
+  const [formData, setFormData] = useState({
+    numeroSite: '',
+    nomSite: '',
+    nomQuartier: '',
+    nomSousPrefecture: '',
+    nomPrefecture: '',
+    superficie:'',
+    hPilone:'',
+    latitude:'',
+    longitude:'',
+    typeSite:'',
+    dateMiseEnService:'',
+    etat:'',
+    localisation:''
+
+  })
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleInputChange = (field: string, value:string) =>{
+    setFormData(prev=>({
+      ...prev,
+      [field]:value
+    }));
+  };
   
-};
+  const handleSubmit = async (e: React.FormEvent) =>{
+    e.preventDefault();
 
+    try{
+      setLoading(true);
+      setError(null)
 
+      const siteData = {
+        ...formData,
+        superficie: parseFloat(formData.superficie),
+        hPilone: parseFloat(formData.hPilone),
+        latitude: parseFloat(formData.latitude),
+        longitude: parseFloat(formData.longitude),
+      };
 
+      console.log(siteData);
+      await siteService.create(siteData);
 
+      
 
-export default function AddSiteModal(props: { open: boolean; onClose: () => void; }) {
-  const { open, onClose,  } = props;
+      setFormData({
+          numeroSite: '',
+          nomSite: '',
+          nomQuartier: '',
+          nomSousPrefecture: '',
+          nomPrefecture: '',
+          superficie:'',
+          hPilone:'',
+          latitude:'',
+          longitude:'',
+          typeSite:'',
+          dateMiseEnService:'',
+          etat:'',
+          localisation:''
+      });
+      onClose();
+      onSuccess?.();
+    }catch(error){
+      setError('Erreur lors de la création du site');
+      console.error(error);
+    }finally{
+      setLoading(false);
+    }
+  }
   
   return (
     <>
@@ -34,36 +96,51 @@ export default function AddSiteModal(props: { open: boolean; onClose: () => void
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={style}>
-        <div className='flex justify-between mb-5'>   
+      <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[843px] bg-white shadow-xl p-6 rounded">
+        <div className='flex justify-between  mb-5  '>   
             <h2 className="font-bold text-[2.4rem] "> Nouveau site </h2>  
          <button onClick={onClose} className=' text-[20px] gap-10 cursor-pointer '>x</button>
         </div>
-        <form className="space-y-6">
+
+          {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-6">
             
-            <div className='flex flex-wrap gap-10'>
-                <div className="w-full md:w-1/2 lg:w-1/4">
-                    <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block' >No Site <span className='text-[#F08130] '>*</span> </label>           
+            <div className='flex flex-wrap md:flex-nowrap lg:flex-nowrap gap-10'>
+                <div className="w-full md:w-1/2 lg:w-1/3">
+                    <label  className='font-bold text-[1.6rem] mb-3 block' >No Site <span className='text-[#F08130] '>*</span> </label>           
                     <input
                     type="text"
                     placeholder="Numero du site"
                     className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full rounded"
+                    value={formData.numeroSite}
+                    onChange={(e) => handleInputChange('numeroSite', e.target.value)}
+                    required
                     />  
                 </div>
                 <div className="w-full md:w-1/2 lg:w-1/3">
-                    <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block' >Nom du Site <span className='text-[#F08130] '>*</span> </label>           
+                    <label  className='font-bold text-[1.6rem] mb-3 block' >Nom du Site <span className='text-[#F08130] '>*</span> </label>           
                     <input
                     type="text"
                     placeholder="Nom du Site"
                     className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full rounded"
+                    value={formData.nomSite}
+                    onChange={(e) => handleInputChange('nomSite', e.target.value)}
+                    required
                     />  
                 </div>
                 <div className="w-full md:w-1/2 lg:w-1/3">
-                    <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Quartier <span className='text-[#F08130] '>*</span> </label>
+                    <label  className='font-bold text-[1.6rem] mb-3 block'> Quartier <span className='text-[#F08130] '>*</span> </label>
                     <div className="relative">
                       <Select
                         className="min-h-[47px] border border-gray-300 font-bold text-[1.4rem]"
                         placeholder="Sélectionner un site"
+                        label=''
+                        value = {formData.nomQuartier}
+                        onChange={(value)=> handleInputChange('quartier', value || "")}    
                         onResize={() => {}}
                         onResizeCapture={() => {}}
                         onPointerEnterCapture={() => {}}
@@ -102,56 +179,70 @@ export default function AddSiteModal(props: { open: boolean; onClose: () => void
                 
             </div>
           
-          <div className='flex  flex-wrap gap-5 '>
-            <div className='w-full md:w-1/2 lg:w-1/3'>
-            <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Superficie m2<span className='text-[#F08130] '>*</span> </label>         
+          <div className='flex flex-wrap md:flex-nowrap lg:flex-nowrap gap-5 '>
+            <div className=' w-full md:w-1/2   '>
+            <label  className='font-bold text-[1.6rem] mb-3 block'> Superficie m2<span className='text-[#F08130] '>*</span> </label>         
             <input
               type="number"
               placeholder="Superfice"
               className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full rounded"
+              value={formData.superficie}
+              onChange={(e)=> handleInputChange('superficie', e.target.value)}
+              required
             />
           </div>
 
-           <div className='w-full md:w-1/2 lg:w-1/3'>
-            <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> H Pilone<span className='text-[#F08130] '>*</span> </label>         
+           <div className='w-full md:w-1/2  '>
+            <label  className='font-bold text-[1.6rem] mb-3 block'> H Pilone<span className='text-[#F08130] '>*</span> </label>         
             <input
               type="number"
               placeholder="H Pilone"
               className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full rounded"
+              value={formData.hPilone}
+              onChange={(e)=> handleInputChange('hPilone', e.target.value)}
+              required
             />
           </div>
           </div>
 
 
-            <div className='flex flex-wrap gap-5 '>
-            <div className='w-full md:w-1/2 lg:w-1/3'>
+            <div className='flex flex-wrap md:flex-nowrap lg:flex-nowrap gap-5 '>
+            <div className='w-full md:w-1/2 '>
             <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Latitude<span className='text-[#F08130] '>*</span> </label>         
             <input
               type="number"
               placeholder="Latitude"
               className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full rounded"
+              value={formData.latitude}
+              onChange={(e)=> handleInputChange('latitude', e.target.value)}
+              required
             />
           </div>
 
-           <div className='w-full md:w-1/2 lg:w-1/3'>
-            <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Longitude<span className='text-[#F08130] '>*</span> </label>         
+           <div className='w-full md:w-1/2  '>
+            <label  className='font-bold text-[1.6rem] mb-3 block'> Longitude<span className='text-[#F08130] '>*</span> </label>         
             <input
               type="number"
               placeholder="Longitude"
               className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full rounded"
+              value={formData.longitude}
+              onChange={(e)=> handleInputChange('longitude', e.target.value)}
+              required
             />
           </div>
           </div>
          
 
-         <div className='flex flex-wrap gap-5 '>
-          <div className="w-full md:w-1/2 lg:w-1/3">
-                    <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Type site <span className='text-[#F08130] '>*</span> </label>
+         <div className='flex flex-wrap md:flex-nowrap lg:flex-nowrap gap-5 '>
+          <div className="w-full md:w-1/2 ">
+                    <label  className='font-bold text-[1.6rem] mb-3 block'> Type site <span className='text-[#F08130] '>*</span> </label>
                     <div className="relative">
                       <Select
                         className="min-h-[47px] border border-gray-300 font-bold text-[1.4rem]"
                         placeholder="Sélectionner un site"
                         onResize={() => {}}
+                        value={formData.typeSite}
+                        onChange={(value)=>handleInputChange('typeSite', value || "")}
                         onResizeCapture={() => {}}
                         onPointerEnterCapture={() => {}}
                         onPointerLeaveCapture={() => {}}
@@ -187,25 +278,30 @@ export default function AddSiteModal(props: { open: boolean; onClose: () => void
                     </div>
                 </div> 
 
-           <div className='w-full md:w-1/2 lg:w-1/4'>
-            <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Date mise en service <span className='text-[#F08130] '>*</span> </label>         
+           <div className='w-full md:w-1/2 '>
+            <label  className='font-bold text-[1.6rem] mb-3 block'> Date mise en service <span className='text-[#F08130] '>*</span> </label>         
             <input
               type="date"
               placeholder="MM/JJ/AAAA"
               className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full rounded"
+              value={formData.dateMiseEnService}
+              onChange={(e)=>handleInputChange('dateMiseEnService', e.target.value)}
+              required
             />
           </div>
           </div>
 
 
-           <div className='flex flex-wrap gap-5 '>
+           <div className='flex flex-wrap md:flex-nowrap lg:flex-nowrap gap-5 '>
 
-                    <div className="w-full md:w-1/2 lg:w-1/3">
-                    <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Etat site <span className='text-[#F08130] '>*</span> </label>
+                    <div className="w-full md:w-1/2 ">
+                    <label  className='font-bold text-[1.6rem] mb-3 block'> Etat site <span className='text-[#F08130] '>*</span> </label>
                     <div className="relative">
                       <Select
                         className="min-h-[47px] border border-gray-300 font-bold text-[1.4rem]"
                         placeholder="Sélectionner un site"
+                        value={formData.etat}
+                        onChange={(value) => handleInputChange('etat', value || "")}
                         onResize={() => {}}
                         onResizeCapture={() => {}}
                         onPointerEnterCapture={() => {}}
@@ -237,12 +333,15 @@ export default function AddSiteModal(props: { open: boolean; onClose: () => void
                     </div>
                 </div>             
 
-            <div className='w-full md:w-1/2 lg:w-1/3'>
-            <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Localisation<span className='text-[#F08130] '>*</span> </label>         
+            <div className='w-full md:w-1/2 '>
+            <label  className='font-bold text-[1.6rem] mb-3 block'> Localisation<span className='text-[#F08130] '>*</span> </label>         
             <input
               type="text"
               placeholder="Type Site"
               className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full rounded"
+              value={formData.localisation}
+              onChange={(e) => handleInputChange('localisation', e.target.value)}
+              required
             />
           </div>
 
@@ -258,10 +357,11 @@ export default function AddSiteModal(props: { open: boolean; onClose: () => void
               Annuler
             </button>
             <button
-              type="button"
-              className=" font-bold text-[1.6rem] md:w-auto px-6 py-3 cursor-pointer rounded cursor-pointer bg-[#F08130]  text-black"
+              type="submit"
+              className=" font-bold text-[1.6rem] md:w-auto px-6 py-3  rounded cursor-pointer bg-[#F08130]  text-black"
+              disabled={loading}
             >
-              Enregistrer
+              {loading ? 'Chargement...':'Enregistrer'}
             </button>
           </div>
         </form>

@@ -14,7 +14,7 @@ const style = {
   p: 4,
 };
 
-export default function DeleteQuartierModal({ open, onClose,  }: { open: boolean; onClose: () => void;  }) {
+export default function DeleteQuartierModal({ open, onClose, onConfirm }: { open: boolean; onClose: () => void; onConfirm: () => void;   }) {
   return (
     <Modal
       open={open}
@@ -49,6 +49,7 @@ export default function DeleteQuartierModal({ open, onClose,  }: { open: boolean
             <button
               type="button"
               className=" font-bold text-[1.6rem] px-4 py-2 rounded bg-[#F08130]"
+              onClick={onConfirm}
             >
               Supprimer
             </button>
@@ -58,3 +59,7 @@ export default function DeleteQuartierModal({ open, onClose,  }: { open: boolean
     </Modal>
   );
 }
+
+
+
+

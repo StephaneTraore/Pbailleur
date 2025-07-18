@@ -124,16 +124,8 @@ function SidebarItem({ icon, label, hasDropdown = false, isButton = false, isOpe
 
         
       )}
-
-      
-
       <Outlet />
     </div>
-
-    
-
-   
-
   );
 }
 

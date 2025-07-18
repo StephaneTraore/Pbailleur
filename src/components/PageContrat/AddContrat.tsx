@@ -221,7 +221,7 @@ export default function AddContratModal(props: { open: boolean; onClose: () => v
             </button>
             <button
               type="button"
-              className=" font-bold text-[1.6rem] px-6 py-3 cursor-pointer rounded cursor-pointer bg-[#F08130]  text-black"
+              className=" font-bold text-[1.6rem] px-6 py-3  rounded cursor-pointer bg-[#F08130]  text-black"
             >
               Enregistrer
             </button>

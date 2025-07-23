@@ -33,7 +33,7 @@ export default function Sites(){
         try{
              setLoading(true);
               const response = await siteService.getAll();
-              setSite(response.data);
+              setSite(response.data.data.content);
               setError(error);
         }catch(error){
           setError('Erreur lors du chargement des Sites');
@@ -58,8 +58,8 @@ export default function Sites(){
       }, [])
 
     const columns: GridColDef<Site>[] = [    
-      { field: 'Numero', 
-        headerName: 'No',
+      { field: 'id', 
+        headerName: 'Nº',
         width: 51,
         sortable: false,
         flex:1,
@@ -67,12 +67,15 @@ export default function Sites(){
         
       },
     
-      { field: 'NoSite', headerName: 'No Site', width: 119, sortable: false,  },
+      { field: 'numeroSite', headerName: 'No Site', width: 119, sortable: false,  },
+      
+      { field: 'nomSite', headerName: 'Non Site', width: 119, sortable: false,  },
 
-      { field: 'NomSite', headerName: 'Non Site', width: 119, sortable: false,  },
+      
+
 
       {
-        field: 'quartier',
+        field: 'nomQuartier',
         headerName: 'Quartier',
         width: 227,
         sortable: false,
@@ -80,15 +83,15 @@ export default function Sites(){
        
       },
       {
-        field: 'NomCrd',
-        headerName: 'Nom CRD',
+        field: 'nomSousPrefecture',
+        headerName: 'Sous Prefecture',
         flex:1, 
         width: 213,
         sortable: false,
         //editable: true,
       },
       {
-        field: 'prefecture',
+        field: 'nomPrefecture',
         headerName: 'Préfecture',
         
         width: 176,
@@ -98,8 +101,8 @@ export default function Sites(){
       },
      
       {
-        field: 'sup',
-        headerName: 'Sup.',
+        field: 'superficie',
+        headerName: 'Sup.(m2)',
         sortable: false,
         width: 207,
         flex:1,
@@ -107,8 +110,8 @@ export default function Sites(){
       },
 
       {
-        field: 'HPilone',
-        headerName: 'H Pilone',
+        field: 'hpilone',
+        headerName: 'H Pilone (m)',
         sortable: false,
         width: 110,
         flex:1,
@@ -234,6 +237,7 @@ export default function Sites(){
         <EditSiteModal open={isOpen.update}
          onClose={() => setIsOpen({...isOpen,update:false})} 
          onSuccess={loadSites}
+         site={selectedSite}
 
          /> 
 

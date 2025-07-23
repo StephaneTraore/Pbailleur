@@ -13,6 +13,8 @@ export default function DetailSiteModal( { open, onClose, site }: DetailSiteModa
   if(!site){
     return null;
   }
+
+  console.log(site);
   
   return (
     <>
@@ -45,7 +47,7 @@ export default function DetailSiteModal( { open, onClose, site }: DetailSiteModa
                 <div className="w-full md:w-1/2 ">
                     <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Quartier  </label>
                     <div className=" text-[1.4rem] bg-[#F6F6F6] font-bold  p-5 rounded" >                       
-                      <span>{site.quartier || 'non renseigné'} </span>
+                      <span>{site.nomQuartier || 'non renseigné'} </span>
                     </div>
                 </div>               
             </div>
@@ -61,7 +63,7 @@ export default function DetailSiteModal( { open, onClose, site }: DetailSiteModa
            <div className='w-full md:w-1/2 '>
             <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> H Pilone </label>         
             <div className=" text-[1.4rem] bg-[#F6F6F6] font-bold  p-5 rounded" >                       
-              <span>{site.hPilone || 'non renseigné'} </span>
+              <span>{site.hpilone|| 'non renseigné'} </span>
             </div>
           </div>
 

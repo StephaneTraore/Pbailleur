@@ -9,27 +9,43 @@ const api = axios.create({
   },
 });
 
+
+
+export interface ContartsResponse {
+   content: Contrats[];
+   totalPages: number;
+   totalElements: number;
+  
+}
+
+interface ApiResponse<T> {
+  data: T;
+  message: string;
+  statusCode: number;
+}
+
 export interface  Contrats {
   id?: number;
-  site: string;
-  ref_contrat: number;
-  date_debut: string;
-  date_fin: string;
-  date_elaboration: string;
-  mt_mensuel_initial: number;
-  mt_mensuel_actuel: number;
-  taux_augmentation: number;
-  taux_cfu: number;
-  type_contrat: string;
+  nomSite: string;
+  reference: string;
+  dateDebut: string;
+  dateFin: string;
+  dateElaboration: string;
+  montantMensuelInitial: number ;
+  montantMensuelActuel: number;
+  tauxAugmentation: number;
+  tauxCfu: number;
+  typeContrat: string;
+  siteId: number;
 
 }
 
 
 export const contratService = {
-  getAll: () => api.get<Contrats[]>('/contrat'),
+  getAll: () => api.get<ApiResponse<ContartsResponse>>('/contrats/all'),
   getById: (id: number) => api.get<Contrats>(`/contrat/${id}`),
-  create: (data: Omit<Contrats, 'id'>) => api.post<Contrats>('/contrat', data),
+  create: (data: Omit<Contrats, 'id'>) => api.post<Contrats>('/contrats/add', data),
   update: (id: number, data: Partial<Contrats>) => api.put<Contrats>(`/contrat/${id}`, data),
-  delete: (id: number) => api.delete(`/contrat/${id}`),
+  delete: (id: number) => api.delete(`/contrats/delete/${id}`),
 };
 

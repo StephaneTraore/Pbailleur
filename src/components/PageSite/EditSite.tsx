@@ -5,20 +5,11 @@ import { IoIosArrowDown, IoIosLink } from 'react-icons/io';
 import { FiEdit } from "react-icons/fi";
 import { Site, siteService } from '../../services/api';
 import { useEffect, useState } from 'react';
+import { Quartiers, QuartierService } from '../../services/quartier';
 
 
 
-// const style = {
-//   position: 'absolute',
-//   top: '50%',
-//   left: '50%',
-//   transform: 'translate(-50%, -50%)',
-//   width: 804,
-//   bgcolor: 'background.paper',
-//   //border: '2px solid #000',
-//   boxShadow: 24,
-//   p: 4,
-// };
+
 
 interface EditSiteModalProps{
 
@@ -34,13 +25,11 @@ interface EditSiteModalProps{
 export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSiteModalProps) {
 
   const [formData, setFormData] = useState({
-     numeroSite: '',
+    numeroSite: '',
     nomSite: '',
-    quartier: '',
-    nomCrd: '',
-    prefecture: '',
+    quartierId: '',
     superficie:'',
-    hPilone:'',
+    hpilone: '',
     latitude:'',
     longitude:'',
     typeSite:'',
@@ -52,22 +41,40 @@ export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSit
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [quartiers, setQuartier] = useState<Quartiers[]>([]);
+
+     useEffect(() => {
+        const fetchQuartier = async () => {
+          try {
+            const response = await QuartierService.getAll();
+            console.log(response.data.data)
+            setQuartier(response.data.data);
+          } catch (error) {
+            console.error("Erreur lors du chargement des Quartiers :", error);
+          }
+        };
+  
+      fetchQuartier();
+    }, []);
+
+  
+
   useEffect(() => {
+    console.log(site)
     if (site && open) {
       setFormData({
         numeroSite: site.numeroSite || '',
         nomSite: site.nomSite || '',
-        quartier: site.quartier || '',
-        nomCrd: site.nomCrd || '',
-        prefecture: site.prefecture || '',
         superficie: site.superficie?.toString() || '',
-        hPilone: site.hPilone?.toString() || '',
+        quartierId: site.quartierId?.toString() || '',
+        hpilone: site.hpilone?.toString() || '',
         latitude: site.latitude?.toString() || '',
         longitude: site.longitude?.toString() || '',
         typeSite: site.typeSite || '',
         dateMiseEnService: site.dateMiseEnService || '',
         etat: site.etat || '',
         localisation: site.localisation || '',
+        
       });
     }
   }, [site, open]);
@@ -94,11 +101,13 @@ export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSit
       const siteData = {
         ...formData,
         superficie: parseFloat(formData.superficie),
-        hPilone: parseFloat(formData.hPilone),
+        hpilone: parseFloat(formData.hpilone),
         latitude: parseFloat(formData.latitude),
         longitude: parseFloat(formData.longitude),
+        quartierId: parseInt(formData.quartierId)
       };
 
+      console.log(siteData);
       await siteService.update(site.id, siteData);
       
       onClose();
@@ -162,8 +171,18 @@ export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSit
                       <Select
                         className="min-h-[47px] border border-gray-300 font-bold text-[1.4rem]"
                         placeholder="Sélectionner un site"
-                        value={formData.quartier}
-                        onChange={(value)=> handleInputChange('quartier', value || '')}
+                        value = {formData.quartierId}
+                        onChange={(value) => {
+                        const selectedQuartier = quartiers.find(q => q.id.toString() === value);
+                        if (selectedQuartier) {
+                          setFormData(prev => ({
+                            ...prev,
+                           
+                            quartierId: selectedQuartier.id.toString(),
+                            
+                          }));
+                        }
+                      }}  
                         onResize={() => {}}
                         onResizeCapture={() => {}}
                         onPointerEnterCapture={() => {}}
@@ -175,24 +194,14 @@ export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSit
                           className: "bg-white border border-gray-200 rounded-lg shadow-lg",
                         }}
                       >
-                        <Option 
-                          value="site1"
-                          className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
-                        >
-                          Site 1
-                        </Option>
-                        <Option 
-                          value="site2"
-                          className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
-                        >
-                          Site 2
-                        </Option>
-                        <Option 
-                          value="site3"
-                          className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
-                        >
-                          Site 3
-                        </Option>
+                    
+                        {quartiers.map(quartier => (
+                            <Option className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]" 
+                              key={quartier.id} value={quartier.id.toString()}>
+                              {quartier.nom}
+                          </Option>
+                            ))}
+                        
                       </Select>
                       <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
                         <IoIosArrowDown className="text-gray-500 text-xl" />
@@ -220,8 +229,8 @@ export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSit
               type="number"
               placeholder="H Pilone"
               className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full rounded"
-              value={formData.hPilone}
-              onChange={(e)=> handleInputChange('hPilone', e.target.value)}
+              value={formData.hpilone}
+              onChange={(e)=> handleInputChange('hpilone', e.target.value)}
             />
           </div>
 
@@ -271,23 +280,29 @@ export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSit
                           className: "bg-white border border-gray-200 rounded-lg shadow-lg",
                         }}
                       >
-                        <Option 
-                          value="site1"
+                         <Option value="HAUBANE"
                           className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
                         >
-                          Site 1
+                          Haubane
                         </Option>
                         <Option 
-                          value="site2"
+                          value="AUTO_STABLE"
                           className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
                         >
-                          Site 2
+                          Auto_Stable
                         </Option>
                         <Option 
-                          value="site3"
+                          value="PILONET"
                           className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
                         >
-                          Site 3
+                          Pilonet
+                        </Option>
+
+                         <Option 
+                          value="INCONNU"
+                          className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
+                        >
+                          Inconnu
                         </Option>
                       </Select>
                       <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
@@ -330,14 +345,14 @@ export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSit
                           className: "bg-white border border-gray-200 rounded-lg shadow-lg",
                         }}
                       >
-                        <Option 
-                          value="site1"
+                       <Option 
+                          value="EN_SERVICE"
                           className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
                         >
                           En service
                         </Option>
                         <Option 
-                          value="site2"
+                          value="HORS_SERVICE"
                           className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
                         >
                           Hors service

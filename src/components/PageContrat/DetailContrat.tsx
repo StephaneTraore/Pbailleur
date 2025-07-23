@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { FiEdit } from 'react-icons/fi';
 import { IoIosArrowDown, IoIosLink } from 'react-icons/io';
+import { Contrats } from '../../services/contrat';
 
 
 
@@ -17,12 +18,21 @@ const style = {
   p: 4,
 };
 
+interface DetailContratModalProps{
+  open:boolean,
+  onClose: () => void,
+  contrat?: Contrats | null
+}
 
 
 
 
-export default function DetailContratModal(props: { open: boolean; onClose: () => void; }) {
-  const { open, onClose,  } = props;
+export default function DetailContratModal({ open, onClose, contrat }:DetailContratModalProps) {
+
+    if(!contrat){
+    return null;
+  }
+ 
   
   return (
     <>
@@ -46,13 +56,13 @@ export default function DetailContratModal(props: { open: boolean; onClose: () =
                 <div className="flex-1">
                     <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block' >Nom du Site  </label> 
                     <div className=" text-[1.4rem] bg-[#F6F6F6] font-bold  p-5 rounded" >                       
-                      <span>2518_FRIGUIADI </span>
+                      <span>{contrat.nomSite} </span>
                     </div>          
                 </div>
                 <div className="flex-1">
                     <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block' >Ref.contrat  </label>           
                     <div className=" text-[1.4rem] bg-[#F6F6F6] font-bold  p-5 rounded" >                       
-                      <span>Site </span>
+                      <span>{contrat.reference}</span>
                     </div>  
                 </div>              
             </div>
@@ -61,14 +71,14 @@ export default function DetailContratModal(props: { open: boolean; onClose: () =
             <div className='flex-1'>
             <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Debut contrat </label>         
             <div className=" text-[1.4rem] bg-[#F6F6F6] font-bold  p-5 rounded" >                       
-              <span>0.0 </span>
+              <span>{contrat.dateDebut} </span>
             </div>
           </div>
 
            <div className='flex-1'>
             <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Fin contrat </label>         
             <div className=" text-[1.4rem] bg-[#F6F6F6] font-bold  p-5 rounded" >                       
-              <span>0.0 </span>
+              <span>{contrat.dateFin} </span>
             </div>
           </div>
           </div>
@@ -77,7 +87,7 @@ export default function DetailContratModal(props: { open: boolean; onClose: () =
             <div className='flex-1'>
             <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Date d'élaboration </label>         
             <div className=" text-[1.4rem] bg-[#F6F6F6] font-bold  p-5 rounded" >                       
-              <span>0.0</span>
+              <span> {contrat.dateElaboration} </span>
             </div>
           </div>
 
@@ -85,7 +95,7 @@ export default function DetailContratModal(props: { open: boolean; onClose: () =
           <div className="flex-1">
               <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Mt mensuel initial  </label>
               <div className=" text-[1.4rem] bg-[#F6F6F6] font-bold  p-5 rounded" >                       
-                <span>0000</span>
+                <span>{contrat.montantMensuelInitial}</span>
               </div>
           </div> 
           </div>
@@ -95,14 +105,14 @@ export default function DetailContratModal(props: { open: boolean; onClose: () =
             <div className="flex-1">
               <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Mt mensuel actuel  </label>
               <div className=" text-[1.4rem] bg-[#F6F6F6] font-bold  p-5 rounded" >                       
-                <span>000</span>
+                <span>{contrat.montantMensuelActuel || 'non renseigné'}</span>
               </div>
             </div>             
 
             <div className='flex-1'>
               <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Taux augmentation </label>         
               <div className=" text-[1.4rem] bg-[#F6F6F6] font-bold p-5  rounded" >                       
-                <span >000</span>
+                <span >{contrat.tauxAugmentation}</span>
               </div>
           </div>   
           </div>
@@ -112,14 +122,14 @@ export default function DetailContratModal(props: { open: boolean; onClose: () =
             <div className="flex-1">
               <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Taux CFU  </label>
               <div className=" text-[1.4rem] bg-[#F6F6F6] font-bold  p-5 rounded" >                       
-                <span>0000</span>
+                <span>{contrat.tauxCfu}</span>
               </div>
             </div>             
 
             <div className='flex-1'>
               <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Type de contrat </label>         
               <div className=" text-[1.4rem] bg-[#F6F6F6] font-bold p-5  rounded" >                       
-                <span >Location</span>
+                <span >{contrat.typeContrat}</span>
               </div>
           </div>   
           </div>

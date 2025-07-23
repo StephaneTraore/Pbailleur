@@ -21,22 +21,22 @@ export default function Contrat(){
   const [error, setError] = useState<string | null>(null);
   const [selectedContrat, setSelecetedContrat] = useState<Contrats | null>(null);
 
-        const loadContrat = async () =>{
-          try{
-               setLoading(true);
-                const response = await contratService.getAll();
-                setContrat(response.data);
-                setError(error);
-          }catch(error){
+  const loadContrat = async () =>{
+   try{
+        setLoading(true);
+        const response = await contratService.getAll();
+        setContrat(response.data.data.content);
+        setError(error);
+      }catch(error){
             setError('Erreur lors du chargement des contrats');
-          }finally{
+      }finally{
             setLoading(false);
-          }   
-        };
+      }   
+      };
 
 
-              const handleDelete = async(id:number)=>{
-                try{
+  const handleDelete = async(id:number)=>{
+      try{
                   await contratService.delete(id);
                   await loadContrat();
                   setIsOpen({...isOpen, confirmation: false});
@@ -59,7 +59,7 @@ export default function Contrat(){
             });
 
         const columns: GridColDef<Contrats>[] = [    
-      { field: 'Numero', 
+      { field: 'id', 
         headerName: 'Nº Contrat',
         width: 51,
         sortable: false,
@@ -69,12 +69,12 @@ export default function Contrat(){
       },
          
 
-      { field: 'NomSite', headerName: 'Non Site', width: 119, sortable: false,  },
+      { field: 'nomSite', headerName: 'Non Site', width: 119, sortable: false,  },
 
-      { field: 'NoSite', headerName: 'Nº Site', width: 119, sortable: false,  },
+      { field: 'siteId', headerName: 'Nº Site', width: 119, sortable: false,  },
 
       {
-        field: 'debut',
+        field: 'dateDebut',
         headerName: 'Date Début',
         width: 227,
         sortable: false,
@@ -82,7 +82,7 @@ export default function Contrat(){
        
       },
       {
-        field: 'mt_mensuel',
+        field: 'montantMensuelActuel',
         headerName: 'Mt mensuel',
         flex:1, 
         width: 213,
@@ -90,7 +90,7 @@ export default function Contrat(){
         //editable: true,
       },
       {
-        field: 'aug',
+        field: 'tauxAugmentation',
         headerName: 'Aug', 
         width: 176,
         sortable: false,
@@ -99,27 +99,17 @@ export default function Contrat(){
       },
      
       {
-        field: 'cfu',
+        field: 'tauxCfu',
         headerName: 'CFU',
         sortable: false,
         width: 207,
         flex:1,
        // valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
-      },
-
     
-
-      {
-        field: 'etat',
-        headerName: 'Etat',
-        sortable: false,
-        width: 110,
-        flex:1,
-       // valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
       },
 
         {
-        field: 'type',
+        field: 'typeContrat',
         headerName: 'Type',
         sortable: false,
         width: 110,
@@ -137,18 +127,32 @@ export default function Contrat(){
         <GridActionsCellItem
           icon={<IoEye size={18} color="#000000" />}
           label="Voir"
-          onClick={() =>setIsOpen({...isOpen,detail:true})}
+          onClick={() =>
+          {
+            setSelecetedContrat(params.row)
+            setIsOpen({...isOpen,detail:true})
+          }
+           }
         />,
         <GridActionsCellItem
           icon={<TiPencil size={18} color="#000" />}
           label="Modifier"
-          onClick={() =>setIsOpen({...isOpen,update:true})}
+          onClick={() =>
+            {
+            setSelecetedContrat(params.row)
+            setIsOpen({...isOpen,update:true})
+            }}
         />,
 
         <GridActionsCellItem
           icon={<IoTrashOutline size={18} color="red" />}
           label="Supprimer"
-          onClick={() =>setIsOpen({...isOpen,confirmation:true})}
+          onClick={() =>
+          {
+            setSelecetedContrat(params.row)
+            setIsOpen({...isOpen,confirmation:true})
+          }
+            }
          
           showInMenu={false}
         />,
@@ -156,15 +160,13 @@ export default function Contrat(){
     }
     ];
     
-    // const rows = [
-    //   { Numero: 3622, id: 1, NomSite:'FRIGUIADI' , NoSite: '2518',  debut: '05/07/2022', fin:'04/07/2027',mt_mensuel:1764706, aug:'0.0', cfu:'15.0', etat:'En service', type:'Location'  },
-    // ];
+
 
     return(
         <>
             <div>
                 <Sidebar />
-                <Myheader title="Contrat" label="Nouveau contrat" total={20} onLabelClick={() =>setIsOpen({...isOpen,add:true})} />
+                <Myheader title="Contrat" label="Nouveau contrat" total={contrat.length} onLabelClick={() =>setIsOpen({...isOpen,add:true})} />
                 <MybuttonContrat />
             </div>
 
@@ -214,28 +216,30 @@ export default function Contrat(){
         <AddContratModal  
         open={isOpen.add} 
         onClose={() => setIsOpen({...isOpen,add:false})} 
-       // onSuccess{loadContrat}
+         onSuccess={loadContrat}
         />
 
 
         <EditContratModal  
         open={isOpen.update} 
         onClose={() => setIsOpen({...isOpen,update:false})} 
-       // onSuccess={loadContrat}
+        onSuccess={loadContrat}
+        contrat={selectedContrat}
+
         />
 
 
         <DetailContratModal  
         open={isOpen.detail} 
         onClose={() => setIsOpen({...isOpen,detail:false})} 
-        //contrat={selectedContrat}
+        contrat={selectedContrat}
         />
 
 
         <DeleteContratModal  
         open={isOpen.confirmation} 
         onClose={() => setIsOpen({...isOpen,confirmation:false})} 
-       // onConfirm={() => selectedContrat && handleDelete(selectedContrat.id!)}
+        onConfirm={() => selectedContrat && handleDelete(selectedContrat.id!)}
         />
 
 

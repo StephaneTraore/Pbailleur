@@ -2,8 +2,10 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Select, Option } from "@material-tailwind/react";
 import { IoIosArrowDown, IoIosLink } from 'react-icons/io';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { siteService } from '../../services/api';
+import { Quartiers, QuartierService } from '../../services/quartier';
+
 
 
 
@@ -16,14 +18,15 @@ interface AddSiteModalProps{
 
 export default function AddSiteModal({ open, onClose, onSuccess }: AddSiteModalProps) {
 
+   const [quartiers, setQuartier] = useState<Quartiers[]>([]);
+
+
   const [formData, setFormData] = useState({
     numeroSite: '',
     nomSite: '',
-    nomQuartier: '',
-    nomSousPrefecture: '',
-    nomPrefecture: '',
+    quartierId: '',
     superficie:'',
-    hPilone:'',
+    hpilone:'',
     latitude:'',
     longitude:'',
     typeSite:'',
@@ -35,6 +38,21 @@ export default function AddSiteModal({ open, onClose, onSuccess }: AddSiteModalP
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+   useEffect(() => {
+      const fetchQuartier = async () => {
+        try {
+          const response = await QuartierService.getAll();
+          console.log(response.data.data)
+          setQuartier(response.data.data);
+        } catch (error) {
+          console.error("Erreur lors du chargement des Quartiers :", error);
+        }
+      };
+
+    fetchQuartier();
+  }, []);
+
 
   const handleInputChange = (field: string, value:string) =>{
     setFormData(prev=>({
@@ -53,9 +71,11 @@ export default function AddSiteModal({ open, onClose, onSuccess }: AddSiteModalP
       const siteData = {
         ...formData,
         superficie: parseFloat(formData.superficie),
-        hPilone: parseFloat(formData.hPilone),
+        hpilone: parseFloat(formData.hpilone),
         latitude: parseFloat(formData.latitude),
         longitude: parseFloat(formData.longitude),
+        quartierId: parseInt(formData.quartierId)
+        
       };
 
       console.log(siteData);
@@ -64,13 +84,13 @@ export default function AddSiteModal({ open, onClose, onSuccess }: AddSiteModalP
       
 
       setFormData({
+
+          
           numeroSite: '',
           nomSite: '',
-          nomQuartier: '',
-          nomSousPrefecture: '',
-          nomPrefecture: '',
+          quartierId: '',
           superficie:'',
-          hPilone:'',
+          hpilone:'',
           latitude:'',
           longitude:'',
           typeSite:'',
@@ -139,8 +159,17 @@ export default function AddSiteModal({ open, onClose, onSuccess }: AddSiteModalP
                         className="min-h-[47px] border border-gray-300 font-bold text-[1.4rem]"
                         placeholder="Sélectionner un site"
                         label=''
-                        value = {formData.nomQuartier}
-                        onChange={(value)=> handleInputChange('quartier', value || "")}    
+                        value = {formData.quartierId}
+                        onChange={(value) => {
+                        const selectedQuartier = quartiers.find(q => q.id.toString() === value);
+                        if (selectedQuartier) {
+                          setFormData(prev => ({
+                            ...prev,
+                           
+                            quartierId: selectedQuartier.id.toString(),
+                          }));
+                        }
+                      }}  
                         onResize={() => {}}
                         onResizeCapture={() => {}}
                         onPointerEnterCapture={() => {}}
@@ -152,24 +181,12 @@ export default function AddSiteModal({ open, onClose, onSuccess }: AddSiteModalP
                           className: "bg-white border border-gray-200 rounded-lg shadow-lg",
                         }}
                       >
-                        <Option 
-                          value="site1"
-                          className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
-                        >
-                          Site 1
-                        </Option>
-                        <Option 
-                          value="site2"
-                          className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
-                        >
-                          Site 2
-                        </Option>
-                        <Option 
-                          value="site3"
-                          className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
-                        >
-                          Site 3
-                        </Option>
+                         {quartiers.map(quartier => (
+                            <Option className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]" 
+                              key={quartier.id} value={quartier.id.toString()}>
+                              {quartier.nom}
+                          </Option>
+                            ))}
                       </Select>
                       <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
                         <IoIosArrowDown className="text-gray-500 text-xl" />
@@ -198,8 +215,8 @@ export default function AddSiteModal({ open, onClose, onSuccess }: AddSiteModalP
               type="number"
               placeholder="H Pilone"
               className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full rounded"
-              value={formData.hPilone}
-              onChange={(e)=> handleInputChange('hPilone', e.target.value)}
+              value={formData.hpilone}
+              onChange={(e)=> handleInputChange('hpilone', e.target.value)}
               required
             />
           </div>
@@ -253,23 +270,29 @@ export default function AddSiteModal({ open, onClose, onSuccess }: AddSiteModalP
                           className: "bg-white border border-gray-200 rounded-lg shadow-lg",
                         }}
                       >
-                        <Option 
-                          value="site1"
+                        <Option value="HAUBANE"
                           className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
                         >
-                          Site 1
+                          Haubane
                         </Option>
                         <Option 
-                          value="site2"
+                          value="AUTO_STABLE"
                           className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
                         >
-                          Site 2
+                          Auto_Stable
                         </Option>
                         <Option 
-                          value="site3"
+                          value="PILONET"
                           className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
                         >
-                          Site 3
+                          Pilonet
+                        </Option>
+
+                         <Option 
+                          value="INCONNU"
+                          className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
+                        >
+                          Inconnu
                         </Option>
                       </Select>
                       <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
@@ -314,13 +337,13 @@ export default function AddSiteModal({ open, onClose, onSuccess }: AddSiteModalP
                         }}
                       >
                         <Option 
-                          value="site1"
+                          value="EN_SERVICE"
                           className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
                         >
                           En service
                         </Option>
                         <Option 
-                          value="site2"
+                          value="HORS_SERVICE"
                           className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
                         >
                           Hors service

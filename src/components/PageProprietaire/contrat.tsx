@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { IoIosLink, IoIosArrowDown } from 'react-icons/io';
 import { Select, Option } from "@material-tailwind/react";
+import { Proprietaire } from '../../services/proprietaire';
+import { Site, siteService } from '../../services/api';
+import { contratProprietaireService } from '../../services/contratProprietaire';
+import { Contrats, contratService } from '../../services/contrat';
 
 const style = {
   position: 'absolute',
@@ -17,13 +21,104 @@ const style = {
 };
 
 
-interface ContratProps{
+interface ContratAjoutProps{
   nom:string;
+  open: boolean;
+  onClose: ()=> void;
+  onSuccess: ()=> void
+  proprietaire: Proprietaire | null ;
 }
 
-export default function ContratModal(props: { open: boolean; onClose: () => void; nom?: string }) {
-  const { open, onClose, nom } = props;
-  const [showContrat, setShowContrat] = useState(false);
+export default function ContratModal2({ open, nom, onSuccess, onClose, proprietaire}: ContratAjoutProps) {
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [contrat, setContrat] = useState<Contrats[]>([]);
+
+
+
+  useEffect(() => {
+    const fetchContrat = async () => {
+      try {
+                  const response = await contratService.getAll();
+                  setContrat(response.data.data.content);
+                } catch (error) {
+                  console.error("Erreur lors du chargement des contrat :", error);
+                }
+              };
+        
+            fetchContrat();
+          }, []);
+
+        
+
+  useEffect(() => {
+  if (proprietaire?.id) {
+    setFormData((prev) => ({
+      ...prev,
+      idProprietaire: proprietaire.id,
+    }));
+  }
+}, [proprietaire]);    
+
+console.log(proprietaire?.id)
+    const [formData, setFormData] = useState({
+
+      idContrat:  '',
+      idProprietaire: proprietaire?.id,
+      idSite: '',
+      partPourcent: '',
+      
+        
+    });
+
+    
+
+
+  const handleInputChange = (field: string, value:string) =>{
+      setFormData(prev=>({
+        ...prev,
+        [field]:value
+      }));
+    };
+    
+    const handleSubmit = async (e: React.FormEvent) =>{
+      e.preventDefault();
+  
+      try{
+        setLoading(true);
+        setError(null)
+  
+        const contratData = {
+          ...formData,
+           idContrat:parseInt(formData.idContrat),
+           idSite: parseInt(formData.idSite),
+           partPourcent: parseFloat(formData.partPourcent),
+          //  idProprietaire: proprietaire?.id,
+           
+             
+        };   
+        await contratProprietaireService.create(contratData);
+        console.log(contratData);
+  
+        setFormData({
+            idContrat: '',
+            idProprietaire: proprietaire?.id,
+            idSite: '',
+            partPourcent: '',
+            
+            
+        });
+        onClose();
+        onSuccess?.();
+      }catch(error){
+        setError('Erreur lors de la création du site');
+        console.error(error);
+      }finally{
+        setLoading(false);
+      }
+    }
+
   return (
     <>
      <Modal
@@ -40,16 +135,15 @@ export default function ContratModal(props: { open: boolean; onClose: () => void
         </div >
          <button onClick={onClose} className=' text-[20px] gap-10 cursor-pointer '>x</button>
         </div>
-        <form className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
             
             <div className='flex gap-10'>
                 <div className="flex-1">
                     <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block' >Nom du proprietaire <span className='text-[#F08130] '>*</span> </label>           
-                    <input
-                    type="text"
-                    placeholder="Nom"
-                    className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full rounded"
-                    />  
+                    <div className=" text-[1.4rem] bg-[#F6F6F6] font-bold  p-5 rounded" >                       
+                    <span>{proprietaire?.nom} </span>
+                    
+                    </div> 
                 </div>
                 <div className="flex-1">
                     <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Site <span className='text-[#F08130] '>*</span> </label>
@@ -58,6 +152,21 @@ export default function ContratModal(props: { open: boolean; onClose: () => void
                         className="min-h-[47px] border border-gray-300 font-bold text-[1.4rem]"
                         placeholder="Sélectionner un site"
                         onResize={() => {}}
+                        //value={formData.idContrat}
+                        onChange={(value) => {
+                        const selectedContrat = contrat.find( c => c.nomSite  === value);
+                        console.log(selectedContrat);
+                        if (selectedContrat) {
+                          setFormData(prev => ({
+                            ...prev,    
+    
+                            idContrat: selectedContrat.id as unknown as string ,
+                            idSite: selectedContrat.siteId.toString(),                     
+                          }                       
+                        ));
+                        }
+                      
+                      }}   
                         onResizeCapture={() => {}}
                         onPointerEnterCapture={() => {}}
                         onPointerLeaveCapture={() => {}}
@@ -68,24 +177,12 @@ export default function ContratModal(props: { open: boolean; onClose: () => void
                           className: "bg-white border border-gray-200 rounded-lg shadow-lg",
                         }}
                       >
-                        <Option 
-                          value="site1"
-                          className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
-                        >
-                          Site 1
-                        </Option>
-                        <Option 
-                          value="site2"
-                          className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
-                        >
-                          Site 2
-                        </Option>
-                        <Option 
-                          value="site3"
-                          className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]"
-                        >
-                          Site 3
-                        </Option>
+                        {contrat.map(contrat => (
+                            <Option className="hover:bg-orange-50 font-bold  py-3 text-[1.4rem]" 
+                              key={contrat.id} value={contrat.nomSite}>
+                              {contrat.nomSite}
+                          </Option>
+                            ))}
                       </Select>
                       <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
                         <IoIosArrowDown className="text-gray-500 text-xl" />
@@ -101,6 +198,8 @@ export default function ContratModal(props: { open: boolean; onClose: () => void
               type="number"
               placeholder="Part"
               className="border text-[1.4rem] font-bold border-gray-300 p-5 w-full rounded"
+              value={formData.partPourcent}
+              onChange={(e)=>handleInputChange('partPourcent', e.target.value)}
             />
           </div>
           
@@ -114,12 +213,8 @@ export default function ContratModal(props: { open: boolean; onClose: () => void
               Annuler
             </button>
             <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                setShowContrat(true);
-              }}
-              className=" font-bold text-[1.6rem] px-6 py-3 cursor-pointer rounded cursor-pointer bg-[#F08130]  text-black"
+              type="submit"
+              className=" font-bold text-[1.6rem] px-6 py-3  rounded cursor-pointer bg-[#F08130]  text-black"
             >
               {nom}
             </button>

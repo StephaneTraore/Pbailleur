@@ -15,7 +15,7 @@ export interface  Proprietaire {
   email: string;
   telephone: string;
   adresse: string | null;
- 
+
 }
 
 export interface ProprietaireResponse {

@@ -31,7 +31,8 @@ export default function Header(){
     const [proprietaire, setProprietaire] = useState<Proprietaire[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [selectedProprio, setSelecetedProprio] = useState<Proprietaire | null>(null);
+    const [selectedProprio, setSelecetedProprio] = useState<Proprietaire | null >(null);
+
   
 
     const loadProprietaires = async () => {
@@ -46,6 +47,7 @@ export default function Header(){
         setLoading(false)
       }
     }
+
 
      const handleDelete = async(id:number)=>{
        try{
@@ -134,6 +136,7 @@ export default function Header(){
       icon={<IoIosLink size={18} color="#000" />}
       label="Lien"
       onClick={()=>{
+        setSelecetedProprio(params.row)
         setIsOpen({...isOpen,contrat:true})}}
     />,
     <GridActionsCellItem
@@ -265,7 +268,11 @@ export default function Header(){
     />  
 
 
-    <ContratModal open={isOpen.contrat} onClose={() =>setIsOpen({...isOpen,contrat:false})} nom='Enregister' />  
+    <ContratModal open={isOpen.contrat} 
+    onClose={() =>setIsOpen({...isOpen,contrat:false})} nom='Enregister' 
+    onSuccess={loadProprietaires}
+    proprietaire = {selectedProprio}
+    />  
      
     </>
     )

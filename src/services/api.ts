@@ -9,15 +9,27 @@ const api = axios.create({
   },
 });
 
+
+export interface SiteResponse {
+   content: Site[];
+   totalPages: number;
+   totalElements: number;
+  
+}
+
+interface ApiResponse<T> {
+  data: T;
+  message: string;
+  statusCode: number;
+}
+
 export interface  Site {
   id?: number;
   numeroSite: string;
   nomSite: string;
-  nomQuartier: string | undefined;
-  nomSousPrefecture: string;
-  nomPrefecture: string;
+  quartierId: number;
   superficie: number;
-  hPilone: number;
+  hpilone: number;
   latitude: number;
   longitude: number;
   typeSite: string;
@@ -28,11 +40,13 @@ export interface  Site {
 }
 
 
+
+
 export const siteService = {
-  getAll: () => api.get<Site[]>('/sites/all'),
+  getAll: () => api.get<ApiResponse<SiteResponse>>('/sites/all'),
   getById: (id: number) => api.get<Site>(`/sites/${id}`),
   create: (data: Omit<Site, 'id'>) => api.post<Site>('/sites/add', data),
-  update: (id: number, data: Partial<Site>) => api.put<Site>(`/sites/${id}`, data),
-  delete: (id: number) => api.delete(`/sites/${id}`),
+  update: (id: number, data: Partial<Site>) => api.put<Site>(`/sites/update/${id}`, data),
+  delete: (id: number) => api.delete(`/sites/delete/${id}`),
 };
 

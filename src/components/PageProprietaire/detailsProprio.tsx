@@ -6,63 +6,82 @@ import {  IoTrashOutline } from "react-icons/io5";
 import { TiPencil } from "react-icons/ti";
 import Box from "@mui/material/Box";
 import ContratModal from "./contrat";
-import ContratModalModification from "./contrat2";
-import ConfirmationModal from "./confirmation";
-import { Proprietaire, proprietaireService } from "../../services/proprietaire";
 import { useLocation } from "react-router-dom";
-
-
-
-
-
-
+import {  ContratProprietaireResponseDto, contratProprietaireService } from "../../services/contratProprietaire";
+import ConfirmationModalDetail from "./confirmation2";
+import { Proprietaire } from "../../services/proprietaire";
+import ContratModificationModal2 from "./contratModification";
 
 
 export default function DetailProprietaire(){
 
 
-    
-
     const [isOpen, setIsOpen] = useState({
           confirmation:false,
           contrat:false,
-          contratModif:false
+          contratModif:false,
+          contratModif2:false
         });
 
 
     const location = useLocation();
-    const selectedProprio = location.state as Proprietaire;    
+    const selectedProprio = location.state ;    
 
 
-        // const [proprietaire, setProprietaire] = useState<Proprietaire[]>([]);
-        // const [loading, setLoading] = useState(true);
-        // const [error, setError] = useState<string | null>(null);
-        // const [selectedProprio, setSelecetedProprio] = useState<Proprietaire | null>(null);
-      
-    
-        // const loadProprietaires = async () => {
-        //   try{
-        //       setLoading(true);
-        //       const response = await proprietaireService.getAll();
-        //       setProprietaire(response.data.data.content);
-        //       setError(error)
-        //   }catch(error){
-        //     setError('Erreur lors du chargement des proprietaires')
-        //   }finally{
-        //     setLoading(false)
-        //   }
-        // }    
-
-
-        //   useEffect(()=>{
-        //     loadProprietaires();
-        //   }, [])
+        const [contratProprietaire, setContratProprietaire] = useState<ContratProprietaireResponseDto[]>([]);
+        const [selectedcontrat, setSelectedContrat] = useState<ContratProprietaireResponseDto >();
+        const [loading, setLoading] = useState(false);
+        const [error, setError] = useState<string | null>(null);
+        const [proprio, setProprio] = useState<Proprietaire | null>(null);
 
 
 
-    const columns: GridColDef<(typeof rows)[number]>[] = [
+           const loadContratProprietaire = async () => {
+             try{
+                 setLoading(true);
+                 const response = await contratProprietaireService.getByProprietaireId(selectedProprio.id);
+                 setContratProprietaire(response.data.data)
+                 setError(error)
+             }catch(error){
+               setError('Erreur lors du chargement des informations')
+             }finally{
+               setLoading(false)
+             }
+           } 
+
+
+
+
+         useEffect(() => {
+        if (selectedProprio?.id) {
+          loadContratProprietaire();
+        }
+        }, [selectedProprio?.id]);
+
+            const handleDelete = async(id:number)=>{
+                try{
+                  await contratProprietaireService.delete(id);
+                  await loadContratProprietaire();
+                  setIsOpen({...isOpen, confirmation: false});
+                }catch(error){
+                  setError('Erreur lors de la suppression');
+                  console.error(error);
+                }
+              };
+        
+
+    const columns: GridColDef<ContratProprietaireResponseDto>[] = [
   
-  { field: 'numero_site', 
+
+
+   { field: 'id', 
+    headerName: 'ID',
+    width: 1,
+    sortable: false,
+    flex:1, 
+  },
+
+    { field: 'siteId', 
     headerName: 'No Site',
     width: 100,
     sortable: false,
@@ -73,7 +92,7 @@ export default function DetailProprietaire(){
 
 
   {
-    field: 'Nom_Site',
+    field: 'siteNom',
     headerName: 'Nom Site',
     width: 227,
     sortable: false,
@@ -81,7 +100,7 @@ export default function DetailProprietaire(){
    
   },
   {
-    field: 'Part',
+    field: 'partPourcent',
     headerName: 'Part %',
     flex:1,
     width: 213,
@@ -89,7 +108,7 @@ export default function DetailProprietaire(){
     
   },
   {
-    field: 'Quartier',
+    field: 'quartierNom',
     headerName: 'Quartier',
     flex:1,
     width: 176,
@@ -98,8 +117,8 @@ export default function DetailProprietaire(){
   },
  
   {
-    field: 'crd',
-    headerName: 'CRD',
+    field: 'regionNom',
+    headerName: 'Region',
     sortable: false,
     width: 207,
     flex:1,
@@ -117,23 +136,30 @@ export default function DetailProprietaire(){
     <GridActionsCellItem
       icon={<TiPencil size={18} color="#000" />}
       label="Modifier"
-      onClick={()=>setIsOpen({...isOpen,contrat:true})}
+      onClick={()=>{
+        setSelectedContrat(params.row)
+        setIsOpen({...isOpen,contratModif2:true})
+      }
+        }
     />,
   
     <GridActionsCellItem
       icon={<IoTrashOutline size={18} color="red" />}
       label="Supprimer"
-      onClick={()=>setIsOpen({...isOpen,confirmation:true})}
+      onClick={()=>
+      {
+        setSelectedContrat(params.row)
+        setIsOpen({...isOpen,confirmation:true})
+      }}
       showInMenu={false}
     />,
   ],
 }
 ];
 
-const rows = [
-  { numero_site: 1887, id: 1, Nom_Site: 'MACENTA_BATA',Part: 100.0, Quartier:'Macenta',crd:'Macenta'},
-  
-];
+  // if (loading) return <div className=" text-center text-5xl ">Chargement...</div>;
+  // if (error) return <div className="text-red-500 text-center text-5xl ">{error}</div>;
+  // if (!contratProprietaire) return  <div className="text-red-500 text-center text-5xl" >Introuvable...</div>;
 
     return(
         <>
@@ -191,8 +217,8 @@ const rows = [
 
       <Box  className=" ml-[337px] mt-[26px] mr-[28px]" >
       <DataGrid
-        rows={rows}
-        columns={columns}
+        rows={contratProprietaire}
+        columns={columns} 
         initialState={{
           pagination: {
             paginationModel: {
@@ -226,13 +252,34 @@ const rows = [
         pageSizeOptions={[5]}
       />
     </Box>
-     <ConfirmationModal 
+     <ConfirmationModalDetail 
           open={isOpen.confirmation} 
           onClose={() => setIsOpen({...isOpen,confirmation:false})}
-          onConfirm={() => setIsOpen({...isOpen,confirmation:false,})}
+          onConfirm={() => handleDelete(selectedcontrat?.id ?? 0)}
         />   
-      <ContratModal open={isOpen.contrat} onClose={() =>setIsOpen({...isOpen,contrat:false})} nom="Modifier" />
-      <ContratModalModification open={isOpen.contratModif} onClose={() =>setIsOpen({...isOpen,contratModif:false})} nom="Enregistrer" />
+
+      {/* <ContratModificationModal open={isOpen.contrat}
+        onClose={() => setIsOpen({ ...isOpen, contrat: false })}
+        nom="Modifier"
+           onSuccess={loadContratProprietaire} proprietaire={null} 
+          /> */}
+
+
+      <ContratModal open={isOpen.contratModif} 
+      onClose={() =>setIsOpen({...isOpen,contratModif:false})} 
+      nom="Enregistrer" onSuccess={loadContratProprietaire}
+       proprietaire={selectedProprio}
+        />
+
+        <ContratModificationModal2
+        open={isOpen.contratModif2}
+        onClose={() => setIsOpen({ ...isOpen, contratModif2: false })}
+        nom="Modifier"
+        onSuccess={loadContratProprietaire}
+        contratProprietaire={selectedcontrat}
+        proprietaire={selectedProprio}
+        
+        />
                
 
         </>

@@ -11,6 +11,7 @@ import AddSiteModal from "../components/PageSite/AddSite";
 import EditSiteModal from "../components/PageSite/EditSite";
 import DetailSiteModal from "../components/PageSite/detail";
 import { Site, siteService } from "../services/api";
+import { toast } from "react-toastify";
 
 
 
@@ -45,10 +46,22 @@ export default function Sites(){
       const handleDelete = async(id:number)=>{
         try{
           await siteService.delete(id);
+          toast.success("Site supprimé avec succès", {
+                position: "top-right",
+                autoClose: 4000,
+                hideProgressBar: false,
+                        
+           });
           await loadSites();
           setIsOpen({...isOpen, confirmation: false});
         }catch(error){
           setError('Erreur lors de la suppression');
+          toast.error("Erreur lors de la suppression", {
+                position: "top-right",
+                autoClose: 4000,
+                hideProgressBar: false,
+                        
+           });
           console.error(error);
         }
       };
@@ -162,10 +175,6 @@ export default function Sites(){
     }
     ];
     
-    // const rows = [
-    //   { Numero: 1, id: 1, NoSite: 'Site001', NomSite:'Site1' , quartier: 'Cosa', NomCrd:'lorem ipsum',prefecture:'Conakry', sup:'lorem', HPilone:'Lorem ipsum', etat:'En service'  },
-    //   { Numero: 2, id: 2, NoSite: 'Site002', NomSite:'Site2' , quartier: 'Bambeto', NomCrd:'lorem ipsum',prefecture:'Conakry', sup:'lorem', HPilone:'Lorem ipsum', etat:'Hors Service'  }, 
-    // ];
 
     //  if(loading) return <div>Chargement...</div>;
     //  if(error) return <div>Erreur: {error}</div>;

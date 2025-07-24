@@ -7,10 +7,13 @@ import NotFound from './pages/NotFound';
 import DetailProprietaire from './components/PageProprietaire/detailsProprio';
 import Contrat from './pages/Contrat';
 import Quartier from './pages/Quartier';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function App() {
   return (
+    <>
     <Router>
       <Routes>
         <Route path="/" element={<Sites />} />
@@ -21,6 +24,8 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
+       <ToastContainer />
+    </>
   )
 }
 

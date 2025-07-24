@@ -11,6 +11,7 @@ import EditContratModal from "../components/PageContrat/EditContrat";
 import DetailContratModal from "../components/PageContrat/DetailContrat";
 import DeleteContratModal from "../components/PageContrat/DeleteContrat";
 import { Contrats, contratService } from "../services/contrat";
+import { toast } from "react-toastify";
 
 
 
@@ -40,9 +41,21 @@ export default function Contrat(){
                   await contratService.delete(id);
                   await loadContrat();
                   setIsOpen({...isOpen, confirmation: false});
+                toast.success("Contrat supprimé avec succès", {
+                position: "top-right",
+                autoClose: 4000,
+                hideProgressBar: false,
+                        
+           });
                 }catch(error){
                   setError('Erreur lors de la suppression');
-                  console.error(error);
+                  toast.error("Erreur lors de la suppression", {
+                      position: "top-right",
+                      autoClose: 4000,
+                      hideProgressBar: false,
+                              
+                   });
+                  //console.error(error);
                 }
               };
 

@@ -301,6 +301,7 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { FiEdit } from 'react-icons/fi';
 import { Quartiers, QuartierService, Region, RegionService } from '../../services/quartier';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 const style = {
   position: 'absolute',
@@ -397,9 +398,15 @@ export default function EditQuartierModal({ open, onClose, quartier, onSuccess }
     try {
       setLoading(true);
       setError(null);
-      console.log(formData)
-      console.log("Données envoyées :", quartier.id, formData);
+      // console.log(formData)
+      // console.log("Données envoyées :", quartier.id, formData);
       await QuartierService.update(quartier.id, formData);
+        toast.success("Quartier mis à jour avec success", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            
+          });
       onClose();
       onSuccess();
     } catch {

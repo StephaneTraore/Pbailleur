@@ -6,6 +6,7 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 import { Site, siteService } from '../../services/api';
 import { useEffect, useState } from 'react';
 import { contratService } from '../../services/contrat';
+import { toast } from 'react-toastify';
 
 
 
@@ -60,7 +61,7 @@ export default function AddContratModal({open, onClose, onSuccess }: AddContrats
             const response = await siteService.getAll();
             setSites(response.data.data.content);
           } catch (error) {
-            console.error("Erreur lors du chargement des sites :", error);
+            //console.error("Erreur lors du chargement des sites :", error);
           }
         };
   
@@ -94,8 +95,12 @@ export default function AddContratModal({open, onClose, onSuccess }: AddContrats
   
         
         await contratService.create(siteData);
-  
-        console.log('donnée envoyé',siteData);
+           toast.success("Contrat Créé avec success", {
+               position: "top-right",
+               autoClose: 4000,
+               hideProgressBar: false,
+                              
+             });
   
         setFormData({    
           nomSite: '',
@@ -113,7 +118,13 @@ export default function AddContratModal({open, onClose, onSuccess }: AddContrats
         onClose();
         onSuccess?.();
       }catch(error){
-        setError('Erreur lors de la création du site');
+        setError('Erreur lors de la création du Contrat');
+        toast.error("Erreur lors de la création du Contrat", {
+           position: "top-right",
+           autoClose: 4000,
+           hideProgressBar: false,
+                              
+        });
         console.error(error);
       }finally{
         setLoading(false);

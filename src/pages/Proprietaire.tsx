@@ -15,6 +15,7 @@ import ConfirmationModal from '../components/PageProprietaire/confirmation';
 import ContratModal from '../components/PageProprietaire/contrat';
 import ModifierModal from '../components/PageProprietaire/Modifier';
 import { Proprietaire, proprietaireService } from '../services/proprietaire';
+import { toast } from 'react-toastify';
 
 
 
@@ -52,10 +53,22 @@ export default function Header(){
      const handleDelete = async(id:number)=>{
        try{
            await proprietaireService.delete(id);
+            toast.success("proprietaire supprimer avec success", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            
+          });
            await loadProprietaires();
               setIsOpen({...isOpen, confirmation: false});
         }catch(error){
               setError('Erreur lors de la suppression');
+         toast.error("Erreur lors de la suppression", {
+                position: "top-right",
+                autoClose: 4000,
+                hideProgressBar: false,
+                        
+           });
               console.error(error);
             }
       };

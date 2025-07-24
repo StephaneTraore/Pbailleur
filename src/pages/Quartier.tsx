@@ -11,6 +11,7 @@ import EditQuartierModal from "../components/PageQuartier/EditQuartier";
 import DeleteQuartierModal from "../components/PageQuartier/DeleteQuartier";
 import DetailQuartierModal from "../components/PageQuartier/DetailQuartier";
 import {  Quartiers, QuartierService } from "../services/quartier";
+import { toast } from "react-toastify";
 
 
 export default function Quartier(){
@@ -38,10 +39,22 @@ export default function Quartier(){
               const handleDelete = async(id:number)=>{
                    try{
                        await QuartierService.delete(id);
+                      toast.success("Quartier supprimé avec success", {
+                          position: "top-right",
+                          autoClose: 4000,
+                          hideProgressBar: false,
+                          
+                        });
                        await loadQuartier();
                           setIsOpen({...isOpen, confirmation: false});
                     }catch(error){
                           setError('Erreur lors de la suppression');
+                          toast.error("Erreur lors de la suppression", {
+                          position: "top-right",
+                          autoClose: 4000,
+                          hideProgressBar: false,
+                          
+                        });
                           console.error(error);
                         }
                   };

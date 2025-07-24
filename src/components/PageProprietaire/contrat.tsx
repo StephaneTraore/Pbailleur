@@ -4,9 +4,9 @@ import Modal from '@mui/material/Modal';
 import { IoIosLink, IoIosArrowDown } from 'react-icons/io';
 import { Select, Option } from "@material-tailwind/react";
 import { Proprietaire } from '../../services/proprietaire';
-import { Site, siteService } from '../../services/api';
 import { contratProprietaireService } from '../../services/contratProprietaire';
 import { Contrats, contratService } from '../../services/contrat';
+import { toast } from 'react-toastify';
 
 const style = {
   position: 'absolute',
@@ -99,7 +99,13 @@ console.log(proprietaire?.id)
              
         };   
         await contratProprietaireService.create(contratData);
-        console.log(contratData);
+        toast.success("Contrat lié avec success", {
+                   position: "top-right",
+                   autoClose: 5000,
+                   hideProgressBar: false,
+                        
+                  });
+        //console.log(contratData);
   
         setFormData({
             idContrat: '',
@@ -112,7 +118,13 @@ console.log(proprietaire?.id)
         onClose();
         onSuccess?.();
       }catch(error){
-        setError('Erreur lors de la création du site');
+        setError('Erreur lors de la création de lien');
+        toast.error("Error lors de la liaison du contrat", {
+             position: "top-right",
+             autoClose: 5000,
+             hideProgressBar: false,
+                        
+        });
         console.error(error);
       }finally{
         setLoading(false);

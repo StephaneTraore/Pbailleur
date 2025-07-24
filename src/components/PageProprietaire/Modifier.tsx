@@ -2,8 +2,8 @@ import React, { use, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { FiEdit } from "react-icons/fi";
-import ConfirmationModal from '../PageProprietaire/confirmation';
 import { Proprietaire, proprietaireService } from '../../services/proprietaire';
+import { toast } from 'react-toastify';
 
 
 const style = {
@@ -76,12 +76,24 @@ export default function ModifierModal({ open, onClose, onSuccess, proprio }: mod
         };
   
         await proprietaireService.update(proprio.id, proprioData);
+        toast.success("proprietaire modifié avec success", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        
+      });
         
         onClose();
         onSuccess?.();
   
       }catch{
-        setError('Erreur lors de la modification du site')
+        setError('Erreur lors de la modification du proprietaire')
+       toast.error("Erreur lors de la modification du proprietaire", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        
+      });
       }finally{
         setLoading(false);
       }

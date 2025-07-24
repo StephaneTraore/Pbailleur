@@ -6,6 +6,7 @@ import { Select, Option } from "@material-tailwind/react";
 import { Proprietaire } from '../../services/proprietaire';
 import { ContratProprietaireResponseDto, contratProprietaireService,  } from '../../services/contratProprietaire';
 import { Contrats, contratService } from '../../services/contrat';
+import { toast } from 'react-toastify';
 
 const style = {
   position: 'absolute',
@@ -111,12 +112,24 @@ export default function ContratModificationModal2({ open, nom, onSuccess, onClos
            partPourcent: parseFloat(formData.partPourcent),
      
         };   
-        console.log('donnée envoyée',contratData)
+       // console.log('donnée envoyée',contratData)
         await contratProprietaireService.update(contratProprietaire?.id ?? 0, contratData);
+        toast.success("Contrat mis à jour avec success", {
+           position: "top-right",
+           autoClose: 5000,
+           hideProgressBar: false,
+                
+          });
         onClose();
         onSuccess?.();
       }catch(error){
-        setError('Erreur lors de la création du contrat');
+        setError('Erreur lors de la mise à jour du contrat');
+        toast.error("Erreur lors de la mise à jour du contrat", {
+           position: "top-right",
+           autoClose: 5000,
+           hideProgressBar: false,
+                
+          });
         console.error(error);
       }finally{
         setLoading(false);

@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { useState } from 'react';
 import { proprietaireService } from '../../services/proprietaire';
+import { toast } from 'react-toastify';
 
 
 interface AddProprioModalProps{
@@ -42,6 +43,12 @@ const handleInputChange = (field: string, value:string) =>{
 
       console.log(proprioData);
       await proprietaireService.create(proprioData);
+      toast.success("proprietaire créé avec succès", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        
+      });
 
       setFormData({
           nom: '',
@@ -53,8 +60,14 @@ const handleInputChange = (field: string, value:string) =>{
       onClose();
       onSuccess?.();
     }catch(error){
-      setError('Erreur lors de la création du site');
-      console.error(error);
+      setError('Erreur lors de la création du propriétaire');
+      toast.error("Erreur lors de la création du propriétaire", {
+       position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+                              
+     });
+      //console.error(error);
     }finally{
       setLoading(false);
     }

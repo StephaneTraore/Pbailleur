@@ -6,6 +6,7 @@ import { FiEdit } from 'react-icons/fi';
 import { Contrats } from '../../services/contrat';
 import { useEffect, useState } from 'react';
 import { Site, siteService } from '../../services/api';
+import { toast } from 'react-toastify';
 
 
 
@@ -117,14 +118,24 @@ export default function EditContratModal({ open, onClose, onSuccess, contrat }: 
           
       };
 
-      console.log(siteData);
+      //console.log(siteData);
       await siteService.update(contrat.id, siteData);
+          toast.success("Contrat mis à jour avec success", {
+                position: "top-right",
+                autoClose: 4000,
+                hideProgressBar: false,     
+           });
       
       onClose();
       onSuccess?.();
 
     }catch{
       setError('Erreur lors de la modification du contrat')
+      toast.error("Erreur lors de la modification du contrat", {
+           position: "top-right",
+           autoClose: 4000,
+           hideProgressBar: false,     
+       });
     }finally{
       setLoading(false);
     }

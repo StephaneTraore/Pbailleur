@@ -6,6 +6,7 @@ import { FiEdit } from "react-icons/fi";
 import { Site, siteService } from '../../services/api';
 import { useEffect, useState } from 'react';
 import { Quartiers, QuartierService } from '../../services/quartier';
+import { toast } from 'react-toastify';
 
 
 
@@ -18,8 +19,6 @@ interface EditSiteModalProps{
   site?: Site | null;
   onSuccess?: () => void;
 }
-
-
 
 
 export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSiteModalProps) {
@@ -47,7 +46,7 @@ export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSit
         const fetchQuartier = async () => {
           try {
             const response = await QuartierService.getAll();
-            console.log(response.data.data)
+            //console.log(response.data.data)
             setQuartier(response.data.data);
           } catch (error) {
             console.error("Erreur lors du chargement des Quartiers :", error);
@@ -107,14 +106,26 @@ export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSit
         quartierId: parseInt(formData.quartierId)
       };
 
-      console.log(siteData);
+      //console.log(siteData);
       await siteService.update(site.id, siteData);
+       toast.success("Site mis à jour avec succès", {
+              position: "top-right",
+              autoClose: 4000,
+              hideProgressBar: false,
+              
+      });
       
       onClose();
       onSuccess?.();
 
     }catch{
       setError('Erreur lors de la modification du site')
+             toast.error("Erreur lors de la modification du site", {
+              position: "top-right",
+              autoClose: 4000,
+              hideProgressBar: false,
+              
+      });
     }finally{
       setLoading(false);
     }

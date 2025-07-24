@@ -5,6 +5,7 @@ import { IoIosArrowDown, IoIosLink } from 'react-icons/io';
 import { useEffect, useState } from 'react';
 import { siteService } from '../../services/api';
 import { Quartiers, QuartierService } from '../../services/quartier';
+import { toast } from 'react-toastify';
 
 
 
@@ -78,8 +79,14 @@ export default function AddSiteModal({ open, onClose, onSuccess }: AddSiteModalP
         
       };
 
-      console.log(siteData);
+     // console.log(siteData);
       await siteService.create(siteData);
+      toast.success("Site créé avec succès", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        
+      });
 
       
 

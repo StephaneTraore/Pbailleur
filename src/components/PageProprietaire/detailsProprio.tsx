@@ -11,6 +11,7 @@ import {  ContratProprietaireResponseDto, contratProprietaireService } from "../
 import ConfirmationModalDetail from "./confirmation2";
 import { Proprietaire } from "../../services/proprietaire";
 import ContratModificationModal2 from "./contratModification";
+import { toast } from "react-toastify";
 
 
 export default function DetailProprietaire(){
@@ -61,10 +62,22 @@ export default function DetailProprietaire(){
             const handleDelete = async(id:number)=>{
                 try{
                   await contratProprietaireService.delete(id);
+                  toast.success("Contrat propriétaire supprimé avec success", {
+                    position: "top-right",
+                    autoClose: 4000,
+                    hideProgressBar: false,
+                    
+                  });
                   await loadContratProprietaire();
                   setIsOpen({...isOpen, confirmation: false});
                 }catch(error){
                   setError('Erreur lors de la suppression');
+                    toast.error("Erreur lors de la suppression", {
+                    position: "top-right",
+                    autoClose: 4000,
+                    hideProgressBar: false,
+                    
+                  });
                   console.error(error);
                 }
               };

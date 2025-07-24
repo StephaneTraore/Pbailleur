@@ -5,6 +5,7 @@ import { IoIosArrowDown} from 'react-icons/io';
 import { useEffect, useState } from 'react';
 import {  QuartierService, Region, RegionService} from '../../services/quartier';
 import React from 'react';
+import { toast } from 'react-toastify';
 
 
 
@@ -88,8 +89,14 @@ export default function AddQuartierModal({open, onClose, onSuccess }: AddQuartie
 
         };
   
-        console.log(quartierData);
+        //console.log(quartierData);
         await QuartierService.create(quartierData);
+        toast.success("Quartier créé avec success", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            
+          });
   
         
   

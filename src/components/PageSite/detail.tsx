@@ -1,6 +1,8 @@
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Site } from '../../services/api';
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 interface DetailSiteModalProps{
   open: boolean,
@@ -14,7 +16,6 @@ export default function DetailSiteModal( { open, onClose, site }: DetailSiteModa
     return null;
   }
 
-  console.log(site);
   
   return (
     <>

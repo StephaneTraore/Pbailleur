@@ -1,9 +1,9 @@
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Select, Option } from "@material-tailwind/react";
-import { IoIosArrowDown, IoIosLink } from 'react-icons/io';
+import { IoIosArrowDown, } from 'react-icons/io';
 import { FiEdit } from "react-icons/fi";
-import { Site, siteService } from '../../services/api';
+import { SiteRequestDto, siteService } from '../../services/api';
 import { useEffect, useState } from 'react';
 import { Quartiers, QuartierService } from '../../services/quartier';
 import { toast } from 'react-toastify';
@@ -16,7 +16,7 @@ interface EditSiteModalProps{
 
   open:boolean;
   onClose: () => void;
-  site?: Site | null;
+  site?: SiteRequestDto | null;
   onSuccess?: () => void;
 }
 
@@ -24,6 +24,7 @@ interface EditSiteModalProps{
 export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSiteModalProps) {
 
   const [formData, setFormData] = useState({
+    id: site?.id,
     numeroSite: '',
     nomSite: '',
     quartierId: '',
@@ -46,7 +47,6 @@ export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSit
         const fetchQuartier = async () => {
           try {
             const response = await QuartierService.getAll();
-            //console.log(response.data.data)
             setQuartier(response.data.data);
           } catch (error) {
             console.error("Erreur lors du chargement des Quartiers :", error);
@@ -56,27 +56,28 @@ export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSit
       fetchQuartier();
     }, []);
 
-  
+   
+useEffect(() => {
+  if (site && open && quartiers.length > 0) {
+    const matchedQuartier = quartiers.find(q => q.nom === (site as any).nomQuartier);
+    const quartierId = matchedQuartier?.id?.toString() || '';
 
-  useEffect(() => {
-    console.log(site)
-    if (site && open) {
-      setFormData({
-        numeroSite: site.numeroSite || '',
-        nomSite: site.nomSite || '',
-        superficie: site.superficie?.toString() || '',
-        quartierId: site.quartierId?.toString() || '',
-        hpilone: site.hpilone?.toString() || '',
-        latitude: site.latitude?.toString() || '',
-        longitude: site.longitude?.toString() || '',
-        typeSite: site.typeSite || '',
-        dateMiseEnService: site.dateMiseEnService || '',
-        etat: site.etat || '',
-        localisation: site.localisation || '',
-        
-      });
-    }
-  }, [site, open]);
+    setFormData({
+      id: site.id,
+      numeroSite: site.numeroSite || '',
+      nomSite: site.nomSite || '',
+      superficie: site.superficie?.toString() || '',
+      quartierId: quartierId,
+      hpilone: site.hpilone?.toString() || '',
+      latitude: site.latitude?.toString() || '',
+      longitude: site.longitude?.toString() || '',
+      typeSite: site.typeSite || '',
+      dateMiseEnService: site.dateMiseEnService || '',
+      etat: site.etat || '',
+      localisation: site.localisation || '',
+    });
+  }
+}, [site, open, quartiers]);
 
   const handleInputChange= (field: string, value: string) => {
     setFormData(prev => ({
@@ -106,7 +107,8 @@ export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSit
         quartierId: parseInt(formData.quartierId)
       };
 
-      //console.log(siteData);
+     
+
       await siteService.update(site.id, siteData);
        toast.success("Site mis à jour avec succès", {
               position: "top-right",
@@ -182,7 +184,7 @@ export default function EditSiteModal({ open, onClose,onSuccess, site }: EditSit
                       <Select
                         className="min-h-[47px] border border-gray-300 font-bold text-[1.4rem]"
                         placeholder="Sélectionner un site"
-                        value = {formData.quartierId}
+                        value = {formData.quartierId} 
                         onChange={(value) => {
                         const selectedQuartier = quartiers.find(q => q.id.toString() === value);
                         if (selectedQuartier) {

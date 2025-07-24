@@ -44,7 +44,7 @@ export default function AddSiteModal({ open, onClose, onSuccess }: AddSiteModalP
       const fetchQuartier = async () => {
         try {
           const response = await QuartierService.getAll();
-          console.log(response.data.data)
+         // console.log(response.data.data)
           setQuartier(response.data.data);
         } catch (error) {
           console.error("Erreur lors du chargement des Quartiers :", error);
@@ -54,6 +54,7 @@ export default function AddSiteModal({ open, onClose, onSuccess }: AddSiteModalP
     fetchQuartier();
   }, []);
 
+   
 
   const handleInputChange = (field: string, value:string) =>{
     setFormData(prev=>({
@@ -90,9 +91,7 @@ export default function AddSiteModal({ open, onClose, onSuccess }: AddSiteModalP
 
       
 
-      setFormData({
-
-          
+      setFormData({    
           numeroSite: '',
           nomSite: '',
           quartierId: '',

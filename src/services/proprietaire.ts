@@ -14,7 +14,7 @@ export interface  Proprietaire {
   nom: string;
   email: string;
   telephone: string;
-  adresse: string | null;
+  adresse: string ;
 
 }
 

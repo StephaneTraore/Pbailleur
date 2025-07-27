@@ -63,7 +63,7 @@ function SidebarItem({ icon, label, hasDropdown = false, isButton = false, isOpe
         <div className="flex items-center gap-4">
           {icon}
           {isButton ? (
-            <button className="text-left text-[1.4rem] bg-transparent border-none outline-none text-white">{label}</button>
+            <button className="text-left text-[1.8rem] bg-transparent border-none outline-none text-white">{label}</button>
           ) : (
             <span>{label}</span>
           )}

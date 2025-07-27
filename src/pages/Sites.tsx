@@ -10,17 +10,17 @@ import Mybuttons from "../components/PageSite/Mybuttons";
 import AddSiteModal from "../components/PageSite/AddSite";
 import EditSiteModal from "../components/PageSite/EditSite";
 import DetailSiteModal from "../components/PageSite/detail";
-import { Site, siteService } from "../services/api";
+import { SiteRequestDto, SiteResponseDto, siteService } from "../services/api";
 import { toast } from "react-toastify";
 
 
 
 export default function Sites(){
 
-      const [sites, setSite]= useState<Site[]>([]);
+      const [sites, setSite]= useState<SiteResponseDto[]>([]);
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState<string | null>(null);
-      const [selectedSite, setSelecetedSite] = useState<Site | null>(null);
+      const [selectedSite, setSelecetedSite] = useState<SiteResponseDto | null>(null);
 
       const [isOpen, setIsOpen] = useState({
           confirmation:false,
@@ -70,7 +70,7 @@ export default function Sites(){
         loadSites();
       }, [])
 
-    const columns: GridColDef<Site>[] = [    
+    const columns: GridColDef<SiteResponseDto>[] = [    
       { field: 'id', 
         headerName: 'Nº',
         width: 51,
@@ -185,14 +185,14 @@ export default function Sites(){
             <Sidebar/>
             <Myheader title="Gestion des Sites"
             label="Nouveau Site" 
-            total={100}
+            total={sites.length}
             onLabelClick={() =>setIsOpen({...isOpen,add:true})}
              />
             <Mybuttons />     
         </div>
                   
         <div>
-            <Box  className=" ml-[337px] mt-[26px] mr-[28px] w-[90%] max-w-[1147px] " >
+            <Box  className=" ml-[337px] mt-[26px] mr-[28px]  " >
             <DataGrid
                 rows={sites}
                 columns={columns}

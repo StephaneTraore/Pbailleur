@@ -79,10 +79,6 @@ export const SousPrefectureService = {
 
 
 
-
-
-
-
 //quartier
 
 export interface Quartiers {

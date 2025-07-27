@@ -16,6 +16,8 @@ import { toast } from "react-toastify";
 
 export default function Quartier(){
 
+  
+
       const [quartier, setQuartier] = useState<Quartiers[]>([]);
         const [loading, setLoading] = useState(true);
         const [error, setError] = useState<string | null>(null);
@@ -160,7 +162,7 @@ export default function Quartier(){
             </div>
 
             <div>
-                 <Box  className=" ml-[337px] mt-[26px] mr-[28px] " >
+            <Box  className=" ml-[337px] mt-[26px] mr-[28px] " >
             <DataGrid
                 rows={quartier}
                 columns={columns}

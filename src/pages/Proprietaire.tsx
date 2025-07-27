@@ -1,4 +1,4 @@
-import  React, {useEffect, useState} from 'react';
+import  React, {useEffect, useRef, useState} from 'react';
 import { CiSearch, CiFilter } from "react-icons/ci";
 import { FaPlus,} from "react-icons/fa6";
 import { LuArrowUpRight } from "react-icons/lu";
@@ -16,12 +16,129 @@ import ContratModal from '../components/PageProprietaire/contrat';
 import ModifierModal from '../components/PageProprietaire/Modifier';
 import { Proprietaire, proprietaireService } from '../services/proprietaire';
 import { toast } from 'react-toastify';
+import * as XLSX from 'xlsx';
 
 
 
 
 
 export default function Header(){
+
+  //recherche
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredProprietaires, setFilteredProprietaires] = useState<Proprietaire[]>([]);
+
+  const handleSearch = () => {
+  const term = searchTerm.trim().toLowerCase();
+
+  if (term === '') {
+    setFilteredProprietaires(proprietaire); // réinitialise les résultats
+    return;
+  }
+
+  const filtered = proprietaire.filter(p =>
+    p.nom.toLowerCase().includes(term) ||
+    p.email.toLowerCase().includes(term) ||
+    p.telephone.toLowerCase().includes(term) ||
+    p.adresse.toLowerCase().includes(term)
+  );
+
+  setFilteredProprietaires(filtered);
+};
+
+  useEffect(() => {
+  handleSearch();
+}, [searchTerm]);
+
+//imprimer
+const printRef = useRef<HTMLDivElement>(null);
+const handlePrintTable = () => {
+  const printWindow = window.open('', '', 'width=900,height=650');
+
+  if (printWindow) {
+    const htmlContent = `
+      <html>
+        <head>
+          <title>Liste des Propriétaires</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 20px;
+            }
+            h1 {
+              text-align: center;
+              margin-bottom: 30px;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: 14px;
+            }
+            th, td {
+              border: 1px solid #ccc;
+              padding: 10px;
+              text-align: left;
+            }
+            th {
+              background-color: #f0f0f0;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Liste des Propriétaires</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Téléphone</th>
+                <th>Email</th>
+                <th>Adresse</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${proprietaire.map(p => `
+                <tr>
+                  <td>${p.id}</td>
+                  <td>${p.nom}</td>
+                  <td>${p.telephone}</td>
+                  <td>${p.email}</td>
+                  <td>${p.adresse}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  }
+};
+
+
+//exporter les données 
+const exportToExcel = () => {
+  const data = proprietaire.map(p => ({
+    ID: p.id,
+    Nom: p.nom,
+    Téléphone: p.telephone,
+    Email: p.email,
+    Adresse: p.adresse
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Propriétaires");
+
+  XLSX.writeFile(workbook, "proprietaires.xlsx");
+};
+
+
     const [isOpen, setIsOpen] = useState({
       confirmation:false,
       update:false,
@@ -41,6 +158,7 @@ export default function Header(){
           setLoading(true);
           const response = await proprietaireService.getAll();
           setProprietaire(response.data.data.content);
+          setFilteredProprietaires(response.data.data.content);
           setError(error)
       }catch(error){
         setError('Erreur lors du chargement des proprietaires')
@@ -166,12 +284,15 @@ export default function Header(){
 
 
 
+
    if(loading) return <div>Chargement...</div>;
      if(error) return <div>Erreur: {error}</div>;
     
     return(
        
          <>
+
+        
 
         <div className='flex flex-row'>   
         <div>
@@ -188,8 +309,13 @@ export default function Header(){
               </div>
               <div className=" w-[492px] flex justify-between items-center gap-[37px] ">
                     <div className="w-[253px] flex justify-between items-center bg-[#F6F6F6]  ">
-                            <h2   className="text-[1.4rem] ml-[23px] mt-[13.5px] mb-[13.5px] font-bold w-[85px]">Rechercher</h2>
-                            <CiSearch  size={24} color="#F08130" className="mr-[26.22px] mt-[13px] mb-[14.72px]" />
+                             <input placeholder="Rechercher"  className="text-[1.4rem] ml-[23px] mt-[13.5px] mb-[13.5px] font-bold w-full "
+
+                             value={searchTerm}
+                             onChange={(e) => setSearchTerm(e.target.value)}
+                             
+                             />
+                               <CiSearch  size={24} color="#F08130" className="mr-[26.22px] mt-[13px] mb-[14.72px]" />
                     </div>
                     
                     <div className="w-[227px] flex justify-between items-center bg-[#F08130]  ">
@@ -211,18 +337,21 @@ export default function Header(){
 
             <div className="flex justify-between w-[101px] items-center bg-white">
                 <LuArrowUpRight size={20} className="ml-[10px] mt-[10px] mb-[10px]" />
-                <button className="mt-[13.5px] mb-[13.5px] mr-[8.5px] text-[13px] font-bold " >Exporter</button>
+                <button className="mt-[13.5px] mb-[13.5px] mr-[8.5px] text-[13px] font-bold " onClick={exportToExcel} >Exporter</button>
+
+                
             </div>
              <div className="flex justify-between w-[116px] items-center bg-white">
                 <IoDocumentTextOutline size={20} className="ml-[10px] mt-[10px] mb-[10px]" />
-                <button className="mt-[13.5px] mb-[13.5px] mr-[14.5px] text-[13px] font-bold " >Imprimer</button>
+                <button className="mt-[13.5px] mb-[13.5px] mr-[14.5px] text-[13px] font-bold " onClick={handlePrintTable}>Imprimer</button>
             </div>
 
         </div>
 
-      <Box  className=" ml-[337px] mt-[26px] mr-[28px] " >
+      <Box ref={printRef} className=" ml-[337px] mt-[26px] mr-[28px] " >
       <DataGrid
-        rows={proprietaire}
+       // rows={proprietaire}
+        rows={filteredProprietaires}
         columns={columns}
         initialState={{
           pagination: {

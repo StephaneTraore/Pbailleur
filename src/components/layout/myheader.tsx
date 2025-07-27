@@ -13,7 +13,7 @@ interface HeaderProps{
 export default function Myheader({title, label, total, onLabelClick}:HeaderProps){
     return(
         <>
-                <div className="ml-[335px] w-[90%] max-w-[1147px] mr-[30px] mt-[85px] bg-white ">
+                <div className="ml-[335px] mr-[30px] mt-[85px] bg-white ">
                           
                           <div className='pt-[24px] pl-[40px] pb-[22px] pr-[15px]  flex  items-center  justify-between    '>
                           <div className='w-[483px] py-[2px]  '>

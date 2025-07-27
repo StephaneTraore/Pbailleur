@@ -16,7 +16,7 @@ interface EditSiteModalProps{
 
   open:boolean;
   onClose: () => void;
-  site?: SiteRequestDto | null;
+  site: SiteRequestDto | null;
   onSuccess?: () => void;
 }
 

@@ -45,6 +45,7 @@ export interface SiteResponseDto{
     nomRegion: string;
     dateMiseEnService: string;
     hpilone: number;
+     quartierId: number;
 }
 
 export interface SiteProprietairePaginatedResponse{

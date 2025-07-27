@@ -137,7 +137,7 @@ export default function AddQuartierModal({open, onClose, onSuccess }: AddQuartie
             
             <div className='flex flex-wrap md:flex-nowrap gap-5 lg:flex-nowrap'>
                 <div className="w-full md:w-1/2">
-                    <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block' >Nom du quartier <span className='text-[#F08130] '>*</span> </label>           
+                    <label  className='font-bold text-[1.6rem] mb-3 block' >Nom du quartier <span className='text-[#F08130] '>*</span> </label>           
                     <input
                     type="text"
                     placeholder="Numero du quartier"
@@ -148,7 +148,7 @@ export default function AddQuartierModal({open, onClose, onSuccess }: AddQuartie
                 </div>
 
                 <div className="w-full md:w-1/2">
-                    <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Region <span className='text-[#F08130] '>*</span> </label>
+                    <label  className='font-bold text-[1.6rem] mb-3 block'> Region <span className='text-[#F08130] '>*</span> </label>
                     <div className="relative">
 
                         <Select
@@ -235,7 +235,7 @@ export default function AddQuartierModal({open, onClose, onSuccess }: AddQuartie
           </div>
 
            <div className='w-full md:w-1/2'>
-            <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Sous-prefecture <span className='text-[#F08130] '>*</span> </label>         
+            <label  className='font-bold text-[1.6rem] mb-3 block'> Sous-prefecture <span className='text-[#F08130] '>*</span> </label>         
               <div className="relative">
                       <Select
                         className="min-h-[47px] border border-gray-300 font-bold text-[1.4rem]"

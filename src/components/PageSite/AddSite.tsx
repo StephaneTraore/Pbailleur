@@ -3,9 +3,9 @@ import Modal from '@mui/material/Modal';
 import { Select, Option } from "@material-tailwind/react";
 import { IoIosArrowDown, IoIosLink } from 'react-icons/io';
 import { useEffect, useState } from 'react';
-import { siteService } from '../../services/api';
-import { Quartiers, QuartierService } from '../../services/quartier';
+import { QuartierService, siteService } from '../../services/api';
 import { toast } from 'react-toastify';
+import { Quartiers } from '../../models/quartier';
 
 
 

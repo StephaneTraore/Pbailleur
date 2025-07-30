@@ -10,8 +10,9 @@ import Mybuttons from "../components/PageSite/Mybuttons";
 import AddSiteModal from "../components/PageSite/AddSite";
 import EditSiteModal from "../components/PageSite/EditSite";
 import DetailSiteModal from "../components/PageSite/detail";
-import { SiteRequestDto, SiteResponseDto, siteService } from "../services/api";
+import {  siteService } from "../services/api";
 import { toast } from "react-toastify";
+import { SiteResponseDto } from "../models/site";
 
 
 
@@ -21,6 +22,7 @@ export default function Sites(){
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState<string | null>(null);
       const [selectedSite, setSelecetedSite] = useState<SiteResponseDto | null>(null);
+      const [searchTerm, setSearchTerm] = useState('');
 
       const [isOpen, setIsOpen] = useState({
           confirmation:false,
@@ -29,6 +31,17 @@ export default function Sites(){
           detail:false,
           
         });
+
+            const filteredSites = sites.filter((q) =>
+              q.nomSite.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              q.nomQuartier?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              q.nomPrefecture?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              q.nomRegion?.toLowerCase().includes(searchTerm.toLowerCase())||
+              q.etat?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              q.nomSousPrefecture?.toLowerCase().includes(searchTerm.toLowerCase())  ||
+              q.numeroSite?.toLowerCase().includes(searchTerm.toLowerCase())  
+              
+            );
 
       const loadSites = async () =>{
         try{
@@ -187,6 +200,8 @@ export default function Sites(){
             label="Nouveau Site" 
             total={sites.length}
             onLabelClick={() =>setIsOpen({...isOpen,add:true})}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
              />
             <Mybuttons />     
         </div>
@@ -194,7 +209,8 @@ export default function Sites(){
         <div>
             <Box  className=" ml-[337px] mt-[26px] mr-[28px]  " >
             <DataGrid
-                rows={sites}
+                //rows={sites}
+                rows={filteredSites}
                 columns={columns}
                 initialState={{
                 pagination: {

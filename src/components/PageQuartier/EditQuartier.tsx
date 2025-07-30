@@ -299,9 +299,11 @@ import Modal from '@mui/material/Modal';
 import { Select, Option } from "@material-tailwind/react";
 import { IoIosArrowDown } from 'react-icons/io';
 import { FiEdit } from 'react-icons/fi';
-import { Quartiers, QuartierService, Region, RegionService } from '../../services/quartier';
+import { QuartierService,  RegionService } from '../../services/api';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { Quartiers } from '../../models/quartier';
+import { Region } from '../../models/region';
 
 const style = {
   position: 'absolute',

@@ -10,24 +10,25 @@ import AddQuartierModal from "../components/PageQuartier/AddQuartier";
 import EditQuartierModal from "../components/PageQuartier/EditQuartier";
 import DeleteQuartierModal from "../components/PageQuartier/DeleteQuartier";
 import DetailQuartierModal from "../components/PageQuartier/DetailQuartier";
-import {  Quartiers, QuartierService } from "../services/quartier";
+import {  QuartierService } from "../services/api";
 import { toast } from "react-toastify";
+import { Quartiers } from "../models/quartier";
 
 
 export default function Quartier(){
 
   
 
-      const [quartier, setQuartier] = useState<Quartiers[]>([]);
-        const [loading, setLoading] = useState(true);
-        const [error, setError] = useState<string | null>(null);
-        const [selectedQuartier, setSelecetedQuartier] = useState<Quartiers | null>(null);
+       const [quartier, setQuartier] = useState<Quartiers[]>([]);
+       const [loading, setLoading] = useState(true);
+       const [error, setError] = useState<string | null>(null);
+       const [selectedQuartier, setSelecetedQuartier] = useState<Quartiers | null>(null);
+       const [searchTerm, setSearchTerm] = useState('');
 
             const loadQuartier = async () => {
               try{
                   setLoading(true);
                   const response = await QuartierService.getAll();
-                  console.log(response);
                   setQuartier(response.data.data);
                   setError(error)
               }catch(error){
@@ -36,6 +37,13 @@ export default function Quartier(){
                 setLoading(false)
               }
             }
+
+            const filteredQuartiers = quartier.filter((q) =>
+              q.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              q.nomSousPrefecture?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              q.nomPrefecture?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              q.nomRegion?.toLowerCase().includes(searchTerm.toLowerCase())
+            );
 
 
               const handleDelete = async(id:number)=>{
@@ -157,14 +165,20 @@ export default function Quartier(){
         <>
             <div>
                 <Sidebar />
-                <Myheader title="Quartiers" label="Nouveau quartier" total={quartier.length} onLabelClick={() =>setIsOpen({...isOpen,add:true})} />
+                <Myheader title="Quartiers" label="Nouveau quartier" 
+                total={quartier.length} 
+                onLabelClick={() =>setIsOpen({...isOpen,add:true})}
+                searchTerm={searchTerm}
+                  onSearchChange={setSearchTerm} 
+                  />
                 <MybuttonQuartier/>
             </div>
 
             <div>
             <Box  className=" ml-[337px] mt-[26px] mr-[28px] " >
             <DataGrid
-                rows={quartier}
+                //rows={quartier}
+                rows={filteredQuartiers}
                 columns={columns}
                 initialState={{
                 pagination: {

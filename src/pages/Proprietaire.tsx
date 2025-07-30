@@ -14,9 +14,10 @@ import AddProprioModal from '../components/PageProprietaire/addProprio';
 import ConfirmationModal from '../components/PageProprietaire/confirmation';
 import ContratModal from '../components/PageProprietaire/contrat';
 import ModifierModal from '../components/PageProprietaire/Modifier';
-import { Proprietaire, proprietaireService } from '../services/proprietaire';
 import { toast } from 'react-toastify';
 import * as XLSX from 'xlsx';
+import { Proprietaire } from '../models/proprietaires';
+import {proprietaireService} from '../services/api'
 
 
 

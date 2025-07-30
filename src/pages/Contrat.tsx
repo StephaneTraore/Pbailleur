@@ -10,8 +10,9 @@ import AddContratModal from "../components/PageContrat/AddContrat";
 import EditContratModal from "../components/PageContrat/EditContrat";
 import DetailContratModal from "../components/PageContrat/DetailContrat";
 import DeleteContratModal from "../components/PageContrat/DeleteContrat";
-import { Contrats, contratService } from "../services/contrat";
+import {  contratService } from "../services/api";
 import { toast } from "react-toastify";
+import { Contrats } from "../models/contrat";
 
 
 
@@ -21,6 +22,8 @@ export default function Contrat(){
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedContrat, setSelecetedContrat] = useState<Contrats | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  
 
   const loadContrat = async () =>{
    try{
@@ -35,12 +38,21 @@ export default function Contrat(){
       }   
       };
 
+         const filteredContrat = contrat.filter((q) =>
+              q.nomSite.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              q.reference?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              q.typeContrat?.toLowerCase().includes(searchTerm.toLowerCase()) 
+              
+    
+              
+            );
+
 
   const handleDelete = async(id:number)=>{
       try{
-                  await contratService.delete(id);
-                  await loadContrat();
-                  setIsOpen({...isOpen, confirmation: false});
+                await contratService.delete(id);
+                await loadContrat();
+                setIsOpen({...isOpen, confirmation: false});
                 toast.success("Contrat supprimé avec succès", {
                 position: "top-right",
                 autoClose: 4000,
@@ -179,16 +191,23 @@ export default function Contrat(){
         <>
             <div>
                 <Sidebar />
-                <Myheader title="Contrat" label="Nouveau contrat" total={contrat.length} onLabelClick={() =>setIsOpen({...isOpen,add:true})} />
+                <Myheader title="Contrat" label="Nouveau contrat" 
+                total={contrat.length} 
+                onLabelClick={() =>setIsOpen({...isOpen,add:true})}
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm} 
+                
+                />
                 <MybuttonContrat />
             </div>
 
             <div>
                 
-                    <div>
+            <div>
             <Box  className=" ml-[337px] mt-[26px] mr-[28px] " >
             <DataGrid
-                rows={contrat}
+                //rows={contrat}
+                rows = {filteredContrat}
                 columns={columns}
                 initialState={{
                 pagination: {

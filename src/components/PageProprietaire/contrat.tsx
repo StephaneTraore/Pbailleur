@@ -3,10 +3,10 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { IoIosLink, IoIosArrowDown } from 'react-icons/io';
 import { Select, Option } from "@material-tailwind/react";
-import { Proprietaire } from '../../services/proprietaire';
-import { contratProprietaireService } from '../../services/contratProprietaire';
-import { Contrats, contratService } from '../../services/contrat';
+import { Proprietaire } from '../../models/proprietaires';
+import { contratProprietaireService, contratService } from '../../services/api';
 import { toast } from 'react-toastify';
+import { Contrats } from '../../models/contrat';
 
 const style = {
   position: 'absolute',
@@ -61,7 +61,7 @@ export default function ContratModal2({ open, nom, onSuccess, onClose, proprieta
   }
 }, [proprietaire]);    
 
-console.log(proprietaire?.id)
+
     const [formData, setFormData] = useState({
 
       idContrat:  '',

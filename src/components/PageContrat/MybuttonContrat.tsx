@@ -3,7 +3,9 @@ import * as XLSX from 'xlsx';
 import { CiFilter } from "react-icons/ci";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { LuArrowUpRight } from "react-icons/lu";
-import { Contrats, contratService } from "../../services/contrat";
+import { Contrats } from "../../models/contrat";
+import { contratService } from "../../services/api";
+
 
 export default function MybuttonContrat(){
 

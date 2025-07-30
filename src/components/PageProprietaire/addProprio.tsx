@@ -1,8 +1,8 @@
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { useState } from 'react';
-import { proprietaireService } from '../../services/proprietaire';
 import { toast } from 'react-toastify';
+import {proprietaireService} from '../../services/api'
 
 
 interface AddProprioModalProps{
@@ -41,7 +41,7 @@ const handleInputChange = (field: string, value:string) =>{
         
       };
 
-      console.log(proprioData);
+      //console.log(proprioData);
       await proprietaireService.create(proprioData);
       toast.success("proprietaire créé avec succès", {
         position: "top-right",

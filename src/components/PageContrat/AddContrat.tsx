@@ -3,9 +3,10 @@ import Modal from '@mui/material/Modal';
 import { Select, Option } from "@material-tailwind/react";
 import { IoIosArrowDown } from 'react-icons/io';
 import { IoDocumentTextOutline } from "react-icons/io5";
-import { Site, siteService } from '../../services/api';
+import { siteService } from '../../services/api';
 import { useEffect, useState } from 'react';
-import { contratService } from '../../services/contrat';
+import { contratService } from '../../services/api';
+import { SiteResponseDto } from '../../models/site';
 import { toast } from 'react-toastify';
 
 
@@ -28,13 +29,13 @@ interface AddContratsModalProps{
   open: boolean;
   onClose: () => void;
   onSuccess?: ()=> void;
-  site?: Site | null;
+  site?: SiteResponseDto | null;
 }
 
 
 export default function AddContratModal({open, onClose, onSuccess }: AddContratsModalProps) {
 
-   const [sites, setSites] = useState<Site[]>([]);
+   const [sites, setSites] = useState<SiteResponseDto[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
 

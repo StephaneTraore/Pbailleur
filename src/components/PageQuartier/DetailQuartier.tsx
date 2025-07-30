@@ -1,8 +1,8 @@
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { FiEdit } from 'react-icons/fi';
-import { Quartiers } from '../../services/quartier';
 import { useLocation } from 'react-router-dom';
+import { Quartiers } from '../../models/quartier';
 
 
 

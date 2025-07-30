@@ -3,9 +3,10 @@ import Modal from '@mui/material/Modal';
 import { Select, Option } from "@material-tailwind/react";
 import { IoIosArrowDown} from 'react-icons/io';
 import { useEffect, useState } from 'react';
-import {  QuartierService, Region, RegionService} from '../../services/quartier';
+import {  QuartierService, RegionService} from '../../services/api';
 import React from 'react';
 import { toast } from 'react-toastify';
+import { Region } from '../../models/region';
 
 
 
@@ -19,7 +20,7 @@ export default function AddQuartierModal({open, onClose, onSuccess }: AddQuartie
 
   const [regions, setRegions] = useState<Region[]>([]);
   const [selectedRegionId, setSelectedRegionId] = useState<string>("");
-  const [selectedPrefectureId, setSelectedPrefectureId] = useState<string | undefined>();
+  const [selectedPrefectureId, setSelectedPrefectureId] = useState<string>("");
   const [selectedSousPrefectureId, setSelectedSousPrefectureId] = useState<string | undefined>();
 
 
@@ -40,36 +41,64 @@ export default function AddQuartierModal({open, onClose, onSuccess }: AddQuartie
   }, []);
 
 
-   // ➤ Charger les préfectures lorsqu'une région est sélectionnée
+  // ➤ Charger les préfectures lorsqu'une région est sélectionnée
   useEffect(() => {
     if (selectedRegionId) {
       const region = regions.find(r => r.id.toString() === selectedRegionId);
       setPrefectures(region?.prefectures || []);
-      setSelectedPrefectureId(undefined); // reset
+      setSelectedPrefectureId(""); // reset
       setSousPrefectures([]);
+      setSelectedSousPrefectureId("");
     }
-  }, [selectedRegionId]);
+  }, [selectedRegionId, regions]);
 
   // ➤ Charger les sous-préfectures lorsqu'une préfecture est sélectionnée
   useEffect(() => {
     if (selectedPrefectureId) {
       const prefecture = prefectures.find(p => p.id.toString() === selectedPrefectureId);
-      setSousPrefectures(prefecture?.sousPrefectures || []);
-      setSelectedSousPrefectureId(undefined); // reset
+      if (prefecture) {
+        setSousPrefectures(prefecture?.sousPrefectures || []);
+        setSelectedSousPrefectureId("");
+      }
     }
-  }, [selectedPrefectureId]);
+  }, [selectedPrefectureId, prefectures]);
+
+  // ➤ Forcer la mise à jour du champ préfecture
+  useEffect(() => {
+    if (selectedPrefectureId) {
+      const selected = prefectures.find(p => p.id.toString() === selectedPrefectureId);
+      if (selected) {
+        handleInputChange('nomPrefecture', selected.nom);
+      }
+    }
+  }, [selectedPrefectureId, prefectures]);
+
+  // ➤ Forcer la mise à jour du champ sous-préfecture
+  useEffect(() => {
+    if (selectedSousPrefectureId) {
+      const selected = sousPrefectures.find(sp => sp.id.toString() === selectedSousPrefectureId);
+      if (selected) {
+        handleInputChange('nomSousPrefecture', selected.nomSousPrefecture);
+        handleInputChange('sousPrefectureId', selected.id.toString());
+      }
+    }
+  }, [selectedSousPrefectureId, sousPrefectures]);
+
+
    const [formData, setFormData] = useState({
       nom: '',
       nomSousPrefecture: '',
       nomPrefecture: '',
       nomRegion: '',
-      sousPrefectureId: ''    
+      sousPrefectureId: '',
+    
     })
 
      const [loading, setLoading] = useState(false);
      const [error, setError] = useState<string | null>(null);
 
   const handleInputChange = (field: string, value:string) =>{
+     console.log('field',value)
     setFormData(prev=>({
       ...prev,
       [field]:value
@@ -105,7 +134,8 @@ export default function AddQuartierModal({open, onClose, onSuccess }: AddQuartie
             nomSousPrefecture: '',
             nomPrefecture: '',
             nomRegion: '',
-            sousPrefectureId: ''
+            sousPrefectureId: '',
+
             
 
         });
@@ -150,7 +180,7 @@ export default function AddQuartierModal({open, onClose, onSuccess }: AddQuartie
                 <div className="w-full md:w-1/2">
                     <label  className='font-bold text-[1.6rem] mb-3 block'> Region <span className='text-[#F08130] '>*</span> </label>
                     <div className="relative">
-
+                      
                         <Select
                         className="min-h-[47px] border border-gray-300 font-bold text-[1.4rem]"
                         placeholder="Sélectionner un site"
@@ -163,6 +193,8 @@ export default function AddQuartierModal({open, onClose, onSuccess }: AddQuartie
                             handleInputChange('nomRegion', selected.nom);
                             console.log(selected.nom)
                           }
+                          setPrefectures(selected?.prefectures || []);
+                          setSousPrefectures([]);
                         }}
                          onResizeCapture={() => {}}
                          onPointerEnterCapture={() => {}}
@@ -197,18 +229,17 @@ export default function AddQuartierModal({open, onClose, onSuccess }: AddQuartie
             <div className='w-full md:w-1/2'>
             <label htmlFor="" className='font-bold text-[1.6rem] mb-3 block'> Prefecture<span className='text-[#F08130] '>*</span> </label>         
               <div className="relative">
-                
                       <Select
+                        key={`prefecture-${selectedPrefectureId}`}
                         className="min-h-[47px] border border-gray-300 font-bold text-[1.4rem]"
-                        placeholder="Sélectionner un site"
+                        placeholder="Sélectionner une préfecture"
                         onResize={() => {}}
                         value={selectedPrefectureId}
                         onChange={(value) => {
-                          setSelectedPrefectureId(value);
                           const selected = prefectures.find(p => p.id.toString() === value);
+                          setSelectedPrefectureId(value || '');
                           if (selected) {
                             handleInputChange('nomPrefecture', selected.nom);
-                            console.log(selected.nom)
                           }
                         }}
                         disabled={!prefectures.length}
@@ -238,19 +269,17 @@ export default function AddQuartierModal({open, onClose, onSuccess }: AddQuartie
             <label  className='font-bold text-[1.6rem] mb-3 block'> Sous-prefecture <span className='text-[#F08130] '>*</span> </label>         
               <div className="relative">
                       <Select
+                        key={`sous-prefecture-${selectedSousPrefectureId}`}
                         className="min-h-[47px] border border-gray-300 font-bold text-[1.4rem]"
-                        placeholder="Sélectionner un site"
+                        placeholder="Sélectionner une sous-préfecture"
                         onResize={() => {}}
                         value={selectedSousPrefectureId}
                         onChange={(value) => {
-                          setSelectedSousPrefectureId(value);
                           const selected = sousPrefectures.find(sp => sp.id.toString() === value);
+                          setSelectedSousPrefectureId(value || '');
                           if (selected) {
                             handleInputChange('nomSousPrefecture', selected.nomSousPrefecture);
-                            handleInputChange('sousPrefectureId', selected.id.toString());
-
-                            console.log(selected.nomSousPrefecture)
-                            console.log(selected.id.toString())
+                            handleInputChange('sousPrefectureId', selected.id.toString());  
                           }
                         }}
                         disabled={!sousPrefectures.length}
@@ -301,6 +330,3 @@ export default function AddQuartierModal({open, onClose, onSuccess }: AddQuartie
     </>
   );
 }
-
-
-

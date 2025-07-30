@@ -3,10 +3,11 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { IoIosLink, IoIosArrowDown } from 'react-icons/io';
 import { Select, Option } from "@material-tailwind/react";
-import { Proprietaire } from '../../services/proprietaire';
-import { ContratProprietaireResponseDto, contratProprietaireService,  } from '../../services/contratProprietaire';
-import { Contrats, contratService } from '../../services/contrat';
 import { toast } from 'react-toastify';
+import { Contrats } from '../../models/contrat';
+import { ContratProprietaireResponseDto } from '../../models/contratProprietaire';
+import { Proprietaire } from '../../models/proprietaires';
+import { contratService, contratProprietaireService } from '../../services/api';
 
 const style = {
   position: 'absolute',
@@ -53,7 +54,6 @@ export default function ContratModificationModal2({ open, nom, onSuccess, onClos
 
           
   useEffect(()=>{
-    console.log('contratPro',contratProprietaire);
     if( contratProprietaire && open){
       setFormData({
        
@@ -66,7 +66,7 @@ export default function ContratModificationModal2({ open, nom, onSuccess, onClos
     }
   }, [contratProprietaire, open]);
 
-    //console.log('contratPro',contratProprietaire);
+
 
   useEffect(() => {
   if (proprietaire?.id) {
@@ -112,7 +112,7 @@ export default function ContratModificationModal2({ open, nom, onSuccess, onClos
            partPourcent: parseFloat(formData.partPourcent),
      
         };   
-       // console.log('donnée envoyée',contratData)
+
         await contratProprietaireService.update(contratProprietaire?.id ?? 0, contratData);
         toast.success("Contrat mis à jour avec success", {
            position: "top-right",

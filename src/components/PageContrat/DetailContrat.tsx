@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { FiEdit } from 'react-icons/fi';
 import { IoIosArrowDown, IoIosLink } from 'react-icons/io';
-import { Contrats } from '../../services/contrat';
+import { Contrats } from '../../models/contrat';
 
 
 

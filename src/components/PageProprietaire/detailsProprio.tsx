@@ -7,11 +7,12 @@ import { TiPencil } from "react-icons/ti";
 import Box from "@mui/material/Box";
 import ContratModal from "./contrat";
 import { useLocation } from "react-router-dom";
-import {  ContratProprietaireResponseDto, contratProprietaireService } from "../../services/contratProprietaire";
 import ConfirmationModalDetail from "./confirmation2";
-import { Proprietaire } from "../../services/proprietaire";
 import ContratModificationModal2 from "./contratModification";
 import { toast } from "react-toastify";
+import { ContratProprietaireResponseDto } from "../../models/contratProprietaire";
+import { Proprietaire } from "../../models/proprietaires";
+import { contratProprietaireService } from "../../services/api";
 
 
 export default function DetailProprietaire(){

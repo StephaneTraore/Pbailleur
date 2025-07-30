@@ -3,10 +3,11 @@ import Modal from '@mui/material/Modal';
 import { Select, Option } from "@material-tailwind/react";
 import { IoIosArrowDown } from 'react-icons/io';
 import { FiEdit } from 'react-icons/fi';
-import { Contrats } from '../../services/contrat';
+import { Contrats } from '../../models/contrat';
 import { useEffect, useState } from 'react';
-import { Site, siteService } from '../../services/api';
+import {  siteService } from '../../services/api';
 import { toast } from 'react-toastify';
+import { SiteResponseDto } from '../../models/site';
 
 
 
@@ -36,13 +37,12 @@ export default function EditContratModal({ open, onClose, onSuccess, contrat }: 
  
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [sites, setSites] = useState<Site[]>([]);
+    const [sites, setSites] = useState<SiteResponseDto[]>([]);
 
     useEffect(() => {
         const fetchSites = async () => {
           try {
                 const response = await siteService.getAll();
-                console.log(response.data.data.content)
                 setSites(response.data.data.content);
               } catch (error) {
                 console.error("Erreur lors du chargement des Sites :", error);
@@ -69,7 +69,6 @@ export default function EditContratModal({ open, onClose, onSuccess, contrat }: 
 
 
     useEffect(() => {
-    console.log(contrat)
     if (contrat && open) {
       setFormData({
 
@@ -118,7 +117,7 @@ export default function EditContratModal({ open, onClose, onSuccess, contrat }: 
           
       };
 
-      //console.log(siteData);
+
       await siteService.update(contrat.id, siteData);
           toast.success("Contrat mis à jour avec success", {
                 position: "top-right",

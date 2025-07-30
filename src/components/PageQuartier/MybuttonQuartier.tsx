@@ -3,8 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { CiFilter } from "react-icons/ci";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { LuArrowUpRight } from "react-icons/lu";
-import { Quartiers, QuartierService } from "../../services/quartier";
+import {  QuartierService } from "../../services/api";
 import * as XLSX from 'xlsx';
+import { Quartiers } from "../../models/quartier";
 
 
 

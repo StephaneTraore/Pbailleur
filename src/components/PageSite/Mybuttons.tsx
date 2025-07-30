@@ -2,11 +2,13 @@
 import { CiFilter } from "react-icons/ci";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { LuArrowUpRight } from "react-icons/lu";
-import { SiteResponseDto, siteService } from "../../services/api";
+import {  siteService } from "../../services/api";
 import { useEffect, useRef, useState } from "react";
 import * as XLSX from 'xlsx';
+import { SiteResponseDto } from "../../models/site";
 
 export default function Mybuttons(){
+
 
       const [sites, setSite] = useState<SiteResponseDto[]>([]);
 

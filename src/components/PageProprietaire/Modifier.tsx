@@ -2,8 +2,9 @@ import React, { use, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { FiEdit } from "react-icons/fi";
-import { Proprietaire, proprietaireService } from '../../services/proprietaire';
 import { toast } from 'react-toastify';
+import { Proprietaire } from '../../models/proprietaires';
+import { proprietaireService } from '../../services/api';
 
 
 const style = {

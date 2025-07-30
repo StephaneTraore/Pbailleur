@@ -3,10 +3,11 @@ import Modal from '@mui/material/Modal';
 import { Select, Option } from "@material-tailwind/react";
 import { IoIosArrowDown, } from 'react-icons/io';
 import { FiEdit } from "react-icons/fi";
-import { SiteRequestDto, siteService } from '../../services/api';
+import { QuartierService, siteService } from '../../services/api';
 import { useEffect, useState } from 'react';
-import { Quartiers, QuartierService } from '../../services/quartier';
 import { toast } from 'react-toastify';
+import { SiteRequestDto } from '../../models/site';
+import { Quartiers } from '../../models/quartier';
 
 
 

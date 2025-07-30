@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { FaPlus } from "react-icons/fa6";
 
@@ -7,10 +7,14 @@ interface HeaderProps{
     label:string;
     total:number;
     onLabelClick?: () => void;
+    searchTerm?: string;
+    onSearchChange?: (value: string) => void;
        
 }
 
-export default function Myheader({title, label, total, onLabelClick}:HeaderProps){
+export default function Myheader({title, label, total, onLabelClick, searchTerm, onSearchChange}:HeaderProps){
+
+      
     return(
         <>
                 <div className="ml-[335px] mr-[30px] mt-[85px] bg-white ">
@@ -23,7 +27,11 @@ export default function Myheader({title, label, total, onLabelClick}:HeaderProps
                           </div>
                           <div className=" w-[90%] max-w-[492px] flex flex-wrap   gap-10 items-center  ">
                                 <div className="max-w-[227px] w-[100%] flex justify-between items-center bg-[#F6F6F6]  ">
-                                        <input placeholder="Rechercher"  className="text-[1.4rem] ml-[23px] mt-[13.5px] mb-[13.5px] font-bold w-full " />
+                                        <input placeholder="Rechercher"  className="text-[1.4rem] ml-[23px] mt-[13.5px] mb-[13.5px] font-bold w-full " 
+                                        
+                                         value={searchTerm}
+                                          onChange={(e) => onSearchChange?.(e.target.value)}
+                                        />
                                         <CiSearch  size={24} color="#F08130" className="mr-[26.22px] mt-[13px] mb-[14.72px]" />
                                 </div>
                                 
